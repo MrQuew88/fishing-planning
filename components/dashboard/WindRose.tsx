@@ -65,10 +65,10 @@ export default function WindDirectionChart({ data }: { data: DailyWeather[] }) {
           <Tooltip
             contentStyle={{ backgroundColor: "#1f2937", border: "1px solid #374151" }}
             labelStyle={{ color: "#9ca3af" }}
-            formatter={(_: unknown, __: string, entry: { payload: { direction: string; vent_kmh: number | null } }) => {
+            formatter={((_: unknown, __: string, entry: { payload: { direction: string; vent_kmh: number | null } }) => {
               const p = entry.payload;
               return [`${p.direction} — ${p.vent_kmh ?? "?"}  km/h`, "Vent"];
-            }}
+            }) as never}
           />
           <Scatter data={chartData} fill="#10b981">
             {chartData.map((entry, i) => (
