@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { HourlyForecast, Solunar } from "@/lib/types";
 
+const D = "font-[family-name:var(--font-space)]";
+
 interface ForecastWeekProps {
   forecast: HourlyForecast[];
   solunar: Solunar[];
@@ -37,45 +39,51 @@ function moonEmoji(illumination: number | null): string {
   return "\uD83C\uDF15";
 }
 
-function daySummary(hours: HourlyForecast[]): { label: string; color: string } {
+function trimSeconds(time: string): string {
+  return time.slice(0, 5);
+}
+
+function conditionBadge(hours: HourlyForecast[]): { label: string; bg: string; text: string } {
   const dayH = hours.filter((h) => {
     const hr = parseInt(h.datetime.slice(11, 13), 10);
     return hr >= 7 && hr <= 19;
   });
-  if (dayH.length === 0) return { label: "", color: "text-slate-400" };
+  if (dayH.length === 0) return { label: "", bg: "", text: "" };
 
   const avgWind = dayH.reduce((s, h) => s + (h.vent_vitesse_kmh ?? 0), 0) / dayH.length;
   const avgRain = dayH.reduce((s, h) => s + (h.pluie_probabilite ?? 0), 0) / dayH.length;
   const maxGust = Math.max(...dayH.map((h) => h.vent_rafales_kmh ?? 0));
 
-  if (avgRain > 60) return { label: "Pluvieux", color: "text-slate-400" };
-  if (maxGust > 50 || avgWind > 35) return { label: "Venteux", color: "text-amber-600" };
-  if (avgRain > 30) return { label: "Averses", color: "text-slate-400" };
-  if (avgWind > 20) return { label: "Brise", color: "text-slate-500" };
-  return { label: "Calme", color: "text-emerald-600" };
+  if (avgRain > 60) return { label: "Pluvieux", bg: "bg-white/[0.06]", text: "text-white/50" };
+  if (maxGust > 50 || avgWind > 35) return { label: "Venteux", bg: "bg-[#F59E0B]/10", text: "text-[#F59E0B]" };
+  if (avgRain > 30) return { label: "Averses", bg: "bg-white/[0.06]", text: "text-white/50" };
+  if (avgWind > 20) return { label: "Brise", bg: "bg-white/[0.06]", text: "text-white/55" };
+  return { label: "Calme", bg: "bg-[#22C55E]/10", text: "text-[#22C55E]" };
 }
 
-function pressureTrendDay(hours: HourlyForecast[]): string {
+function pressureTrendDay(hours: HourlyForecast[]): { label: string; arrow: string; color: string } {
   const valid = hours.filter((h) => h.pression_hpa != null);
-  if (valid.length < 4) return "\u2192";
+  if (valid.length < 4) return { label: "Stable", arrow: "\u2192", color: "text-white/55" };
   const first = valid[0].pression_hpa!;
   const last = valid[valid.length - 1].pression_hpa!;
   const delta = last - first;
-  if (delta > 3) return "\u2197 Hausse";
-  if (delta < -3) return "\u2198 Baisse";
-  return "\u2192 Stable";
+  if (delta > 3) return { label: "Hausse", arrow: "\u2197", color: "text-[#22C55E]" };
+  if (delta < -3) return { label: "Baisse", arrow: "\u2198", color: "text-[#EF4444]/80" };
+  return { label: "Stable", arrow: "\u2192", color: "text-white/55" };
 }
 
 function DaySummaryCard({
   date,
   hours,
   solunar,
+  defaultOpen,
 }: {
   date: string;
   hours: HourlyForecast[];
   solunar: Solunar | undefined;
+  defaultOpen: boolean;
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
 
   const dayH = hours.filter((h) => {
     const hr = parseInt(h.datetime.slice(11, 13), 10);
@@ -88,40 +96,51 @@ function DaySummaryCard({
 
   const winds = dayH.map((h) => h.vent_vitesse_kmh).filter((w): w is number => w != null);
   const avgWind = winds.length > 0 ? Math.round(winds.reduce((a, b) => a + b, 0) / winds.length) : null;
+  const maxGust = dayH.reduce((m, h) => Math.max(m, h.vent_rafales_kmh ?? 0), 0);
 
-  // Dominant wind direction (most common)
   const dirs = dayH.map((h) => h.vent_direction).filter((d): d is string => d != null);
   const dirCount = new Map<string, number>();
   for (const d of dirs) dirCount.set(d, (dirCount.get(d) ?? 0) + 1);
   const dominantDir = [...dirCount.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? "";
 
-  const avgRain = dayH.length > 0
-    ? Math.round(dayH.reduce((s, h) => s + (h.pluie_probabilite ?? 0), 0) / dayH.length)
-    : null;
+  const maxRainProb = dayH.reduce((m, h) => Math.max(m, h.pluie_probabilite ?? 0), 0);
+  const rainCumul = dayH.reduce((s, h) => s + (h.pluie_intensite_mm ?? 0), 0);
 
-  const summary = daySummary(hours);
   const pTrend = pressureTrendDay(dayH);
+  const pressures = dayH.map((h) => h.pression_hpa).filter((p): p is number => p != null);
+  const avgPressure = pressures.length > 0 ? Math.round(pressures.reduce((a, b) => a + b, 0) / pressures.length) : null;
+
+  const badge = conditionBadge(hours);
+
+  // Solunar compact line
+  const majors: string[] = [];
+  const minors: string[] = [];
+  if (solunar) {
+    if (solunar.major_1_start && solunar.major_1_end) majors.push(`${trimSeconds(solunar.major_1_start)}\u2013${trimSeconds(solunar.major_1_end)}`);
+    if (solunar.major_2_start && solunar.major_2_end) majors.push(`${trimSeconds(solunar.major_2_start)}\u2013${trimSeconds(solunar.major_2_end)}`);
+    if (solunar.minor_1_start && solunar.minor_1_end) minors.push(`${trimSeconds(solunar.minor_1_start)}\u2013${trimSeconds(solunar.minor_1_end)}`);
+    if (solunar.minor_2_start && solunar.minor_2_end) minors.push(`${trimSeconds(solunar.minor_2_start)}\u2013${trimSeconds(solunar.minor_2_end)}`);
+  }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+    <div className="bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-2xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full px-5 py-4 active:bg-slate-50 transition-colors min-h-[56px]"
+        className="w-full px-5 py-5 active:bg-white/[0.02] transition-colors text-left"
       >
-        {/* Top row: day + condition */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-base text-slate-800 text-left">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <span className="font-bold text-xl text-white">
               {formatDayHeader(date)}
             </span>
-            {summary.label && (
-              <span className={`text-xs font-medium ${summary.color}`}>
-                {summary.label}
+            {badge.label && (
+              <span className={`text-sm font-semibold px-2.5 py-0.5 rounded-full ${badge.bg} ${badge.text}`}>
+                {badge.label}
               </span>
             )}
           </div>
           <svg
-            className={`w-4 h-4 text-slate-300 transition-transform duration-300 flex-shrink-0 ${open ? "rotate-180" : ""}`}
+            className={`w-5 h-5 text-white/30 transition-transform duration-300 flex-shrink-0 ${open ? "rotate-180" : ""}`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -131,77 +150,76 @@ function DaySummaryCard({
           </svg>
         </div>
 
-        {/* Summary row — the key data at a glance */}
-        <div className="flex items-center gap-4 text-sm">
-          {/* Temp range */}
-          <span className="font-mono font-bold text-slate-700">
+        <div className="flex items-center gap-6">
+          <span className={`${D} font-bold text-2xl text-white tracking-tight`}>
             {tMin != null && tMax != null
-              ? `${Math.round(tMin)}\u00b0 / ${Math.round(tMax)}\u00b0`
+              ? `${Math.round(tMin)}\u00b0\u2013${Math.round(tMax)}\u00b0`
               : "\u2013"}
           </span>
-
-          {/* Wind */}
-          <span className="text-slate-500">
-            <span className="font-mono font-medium">{avgWind ?? "\u2013"}</span>{" "}
-            <span className="text-xs">km/h {dominantDir}</span>
+          <span className="flex items-baseline gap-1.5 text-white/55">
+            <span className={`${D} font-bold text-2xl text-white/70`}>{avgWind ?? "\u2013"}</span>
+            <span className="text-base">km/h {dominantDir}</span>
           </span>
-
-          {/* Rain */}
-          <span className={avgRain != null && avgRain > 50 ? "text-amber-600" : "text-slate-400"}>
-            <span className="font-mono font-medium">{avgRain ?? "\u2013"}</span>
-            <span className="text-xs">% pluie</span>
+          <span className={maxRainProb > 50 ? "text-[#F59E0B]" : "text-white/40"}>
+            <span className={`${D} font-bold text-2xl`}>{Math.round(maxRainProb)}</span>
+            <span className="text-base">%</span>
           </span>
         </div>
       </button>
 
-      {/* Collapsible detail */}
       <div className="collapse-content" data-open={open}>
         <div className="collapse-inner">
-          <div className="px-5 pb-4 pt-1 space-y-3 border-t border-slate-50">
-            {/* Pressure trend */}
-            <div className="flex items-center gap-3 text-xs text-slate-500">
-              <span>Pression : <span className="font-medium">{pTrend}</span></span>
+          <div className="px-5 pb-5 pt-2 border-t border-white/[0.06]">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+              <div>
+                <span className="text-base text-white/40">Vent dominant</span>
+                <div className={`${D} font-bold text-lg text-white/80 mt-1`}>
+                  {dominantDir} {avgWind ?? "\u2013"} km/h
+                </div>
+              </div>
+              <div>
+                <span className="text-base text-white/40">Rafales max</span>
+                <div className={`${D} font-bold text-lg text-white/80 mt-1`}>
+                  {maxGust > 0 ? `${Math.round(maxGust)} km/h` : "\u2013"}
+                </div>
+              </div>
+              <div>
+                <span className="text-base text-white/40">Pression</span>
+                <div className={`${D} font-bold text-lg mt-1 ${pTrend.color}`}>
+                  {pTrend.arrow} {pTrend.label} {avgPressure != null ? `(${avgPressure})` : ""}
+                </div>
+              </div>
+              <div>
+                <span className="text-base text-white/40">Pluie</span>
+                <div className={`${D} font-bold text-lg text-white/80 mt-1`}>
+                  {Math.round(maxRainProb)}% max{rainCumul > 0 ? ` \u00b7 ${rainCumul.toFixed(1)} mm` : ""}
+                </div>
+              </div>
+              {solunar && (
+                <div>
+                  <span className="text-base text-white/40">Soleil</span>
+                  <div className="text-lg text-white/80 mt-1">
+                    {solunar.lever_soleil ? trimSeconds(solunar.lever_soleil) : "\u2013"} \u2013 {solunar.coucher_soleil ? trimSeconds(solunar.coucher_soleil) : "\u2013"}
+                  </div>
+                </div>
+              )}
+              {solunar && (
+                <div>
+                  <span className="text-base text-white/40">Lune</span>
+                  <div className="text-lg text-white/80 mt-1">
+                    {moonEmoji(solunar.moon_illumination)}{" "}
+                    {solunar.moon_illumination != null ? `${Math.round(solunar.moon_illumination)}%` : "\u2013"}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Solunar + sun/moon */}
-            {solunar && (
-              <div className="flex items-center gap-4 text-xs text-slate-400">
-                <span>
-                  {solunar.lever_soleil ?? "\u2013"} \u2013 {solunar.coucher_soleil ?? "\u2013"}
-                </span>
-                <span>
-                  {moonEmoji(solunar.moon_illumination)}{" "}
-                  {solunar.moon_illumination != null
-                    ? `${Math.round(solunar.moon_illumination)}%`
-                    : ""}
-                </span>
-              </div>
-            )}
-
-            {/* Solunar periods detail */}
-            {solunar && (
-              <div className="flex flex-wrap gap-2 text-[11px]">
-                {solunar.major_1_start && solunar.major_1_end && (
-                  <span className="bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">
-                    Maj. {solunar.major_1_start}\u2013{solunar.major_1_end}
-                  </span>
-                )}
-                {solunar.major_2_start && solunar.major_2_end && (
-                  <span className="bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">
-                    Maj. {solunar.major_2_start}\u2013{solunar.major_2_end}
-                  </span>
-                )}
-                {solunar.minor_1_start && solunar.minor_1_end && (
-                  <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
-                    Min. {solunar.minor_1_start}\u2013{solunar.minor_1_end}
-                  </span>
-                )}
-                {solunar.minor_2_start && solunar.minor_2_end && (
-                  <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
-                    Min. {solunar.minor_2_start}\u2013{solunar.minor_2_end}
-                  </span>
-                )}
-              </div>
+            {(majors.length > 0 || minors.length > 0) && (
+              <p className="text-base mt-4 pt-4 border-t border-white/[0.06]">
+                {majors.length > 0 && <span className="text-[#F59E0B]">Maj. {majors.join(" / ")}</span>}
+                {majors.length > 0 && minors.length > 0 && <span className="text-white/20"> {"\u00b7"} </span>}
+                {minors.length > 0 && <span className="text-[#22C55E]">Min. {minors.join(" / ")}</span>}
+              </p>
             )}
           </div>
         </div>
@@ -217,7 +235,7 @@ export default function ForecastWeek({ forecast, solunar }: ForecastWeekProps) {
 
   if (days.length === 0) {
     return (
-      <p className="text-sm text-slate-400 py-8 text-center">
+      <p className="text-lg text-white/40 py-8 text-center">
         Aucune prévision disponible.
       </p>
     );
@@ -225,12 +243,13 @@ export default function ForecastWeek({ forecast, solunar }: ForecastWeekProps) {
 
   return (
     <div className="space-y-3">
-      {days.map((day) => (
+      {days.map((day, i) => (
         <DaySummaryCard
           key={day}
           date={day}
           hours={dayMap.get(day)!}
           solunar={solunarMap.get(day)}
+          defaultOpen={i === 0}
         />
       ))}
     </div>

@@ -2,19 +2,21 @@
 
 import { DailyWeather } from "@/lib/types";
 
+const D = "font-[family-name:var(--font-space)]";
+
 const columns: { key: keyof DailyWeather; label: string }[] = [
   { key: "date", label: "Date" },
-  { key: "tmin_air", label: "T°min" },
-  { key: "tmax_air", label: "T°max" },
-  { key: "temp_eau_c", label: "T°eau" },
-  { key: "temp_moyenne_c", label: "T°moy" },
+  { key: "tmin_air", label: "T\u00b0min" },
+  { key: "tmax_air", label: "T\u00b0max" },
+  { key: "temp_eau_c", label: "T\u00b0eau" },
+  { key: "temp_moyenne_c", label: "T\u00b0moy" },
   { key: "degres_jour_cumules", label: "DJ" },
   { key: "vent_kmh", label: "Vent" },
   { key: "rafales_kmh", label: "Raf." },
   { key: "direction_vent", label: "Dir." },
   { key: "pression_hpa", label: "hPa" },
   { key: "pluie_mm", label: "Pluie" },
-  { key: "niveau_eau_delta", label: "Δ niv." },
+  { key: "niveau_eau_delta", label: "\u0394 niv." },
 ];
 
 function fmt(v: unknown): string {
@@ -25,18 +27,18 @@ function fmt(v: unknown): string {
 
 export default function WeatherTable({ data }: { data: DailyWeather[] }) {
   if (!data.length) {
-    return <p className="text-sm text-slate-400">Aucune donnée disponible.</p>;
+    return <p className="text-base text-white/40">Aucune donn\u00e9e disponible.</p>;
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-100">
-      <table className="w-full text-xs">
+    <div className="overflow-x-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl">
+      <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-100 bg-slate-50">
+          <tr className="border-b border-white/[0.06]">
             {columns.map((col) => (
               <th
                 key={col.key}
-                className="px-2.5 py-2 text-left font-medium text-slate-400 whitespace-nowrap"
+                className="px-3 py-2.5 text-left font-bold text-white/40 whitespace-nowrap"
               >
                 {col.label}
               </th>
@@ -45,9 +47,9 @@ export default function WeatherTable({ data }: { data: DailyWeather[] }) {
         </thead>
         <tbody>
           {data.map((row) => (
-            <tr key={row.id} className="border-b border-slate-50 hover:bg-slate-50/50">
+            <tr key={row.date} className="border-b border-white/[0.04] hover:bg-white/[0.03]">
               {columns.map((col) => (
-                <td key={col.key} className="px-2.5 py-1.5 whitespace-nowrap font-mono text-slate-600">
+                <td key={col.key} className={`px-3 py-2 whitespace-nowrap ${D} text-white/70`}>
                   {fmt(row[col.key])}
                 </td>
               ))}

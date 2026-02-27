@@ -1,7 +1,8 @@
 import { supabase } from "@/lib/supabase";
 import { HourlyForecast, Solunar } from "@/lib/types";
 import TodayHours from "@/components/briefing/TodayHours";
-import SolunarBar from "@/components/briefing/SolunarBar";
+import SolunarText from "@/components/briefing/SolunarBar";
+import SunriseSunset from "@/components/briefing/SunriseSunset";
 
 export const dynamic = "force-dynamic";
 
@@ -56,25 +57,28 @@ export default async function BriefingPage() {
 
   return (
     <div className="space-y-6 pt-6">
-      {/* Today's hours — main content, auto-scrolls to current hour */}
+      {/* 1. Today's hourly cards */}
       {todayHours.length > 0 && (
-        <section className="space-y-3">
-          <h2 className="text-xs font-medium text-slate-400 uppercase tracking-wider px-1">
+        <section className="space-y-4">
+          <h2 className="text-base font-bold text-[#F1F5F9] uppercase tracking-[0.15em] px-1">
             Aujourd&apos;hui heure par heure
           </h2>
           <TodayHours hours={todayHours} />
         </section>
       )}
 
-      {/* Solunar bar — always visible */}
-      {todaySolunar && <SolunarBar solunar={todaySolunar} />}
+      {/* 2. Solunar text with countdown */}
+      {todaySolunar && <SolunarText solunar={todaySolunar} />}
 
-      {/* Tactical briefing placeholder */}
-      <section className="bg-white rounded-2xl shadow-sm p-6">
-        <h2 className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">
+      {/* 3. Sunrise / Sunset */}
+      {todaySolunar && <SunriseSunset solunar={todaySolunar} />}
+
+      {/* 4. Tactical briefing placeholder */}
+      <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+        <h2 className="text-base font-bold text-[#F1F5F9] uppercase tracking-[0.15em] mb-3">
           Briefing tactique
         </h2>
-        <p className="text-sm text-slate-400">
+        <p className="text-base text-white/40">
           Analyse des conditions et plan de p&ecirc;che — bient&ocirc;t disponible.
         </p>
       </section>

@@ -11,6 +11,11 @@ interface ConditionsTabsProps {
   solunar: Solunar[];
 }
 
+const tabs = [
+  { key: "historique" as const, label: "Historique" },
+  { key: "previsions" as const, label: "Prévisions" },
+];
+
 export default function ConditionsTabs({
   weatherData,
   forecast,
@@ -19,37 +24,32 @@ export default function ConditionsTabs({
   const [tab, setTab] = useState<"historique" | "previsions">("historique");
 
   return (
-    <div className="space-y-6">
-      {/* Sub-tabs */}
-      <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
-        <button
-          onClick={() => setTab("historique")}
-          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
-            tab === "historique"
-              ? "bg-white text-slate-800 shadow-sm"
-              : "text-slate-400 hover:text-slate-600"
-          }`}
-        >
-          Historique
-        </button>
-        <button
-          onClick={() => setTab("previsions")}
-          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
-            tab === "previsions"
-              ? "bg-white text-slate-800 shadow-sm"
-              : "text-slate-400 hover:text-slate-600"
-          }`}
-        >
-          Prévisions 7j
-        </button>
+    <div className="space-y-8">
+      {/* Sub-navigation pills */}
+      <div className="flex gap-1 p-1 bg-white/5 border border-white/10 rounded-2xl w-fit">
+        {tabs.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            className={`px-5 py-2 rounded-full text-sm font-bold uppercase tracking-[0.1em] transition-colors ${
+              tab === t.key
+                ? "bg-white/10 text-white"
+                : "text-white/40 hover:text-white/60"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
 
       {/* Content */}
-      {tab === "historique" ? (
-        <HistorySection data={weatherData} />
-      ) : (
-        <ForecastWeek forecast={forecast} solunar={solunar} />
-      )}
+      <div className="animate-fade-in" key={tab}>
+        {tab === "historique" ? (
+          <HistorySection data={weatherData} />
+        ) : (
+          <ForecastWeek forecast={forecast} solunar={solunar} />
+        )}
+      </div>
     </div>
   );
 }

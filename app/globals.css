@@ -1,17 +1,40 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-jetbrains-mono);
-  --color-lake: #16a34a;
-  --color-lake-light: #dcfce7;
-  --color-amber: #d97706;
-  --color-amber-light: #fef3c7;
-  --color-surface: #F8F9FA;
-  --color-card: #FFFFFF;
+  --font-sans: var(--font-jakarta);
+  --font-data: var(--font-space);
+  --color-lake: #22C55E;
+  --color-amber: #F59E0B;
+  --color-danger: #EF4444;
+  --color-surface: #0B1426;
+  --color-card: rgba(255, 255, 255, 0.05);
 }
 
-/* Smooth collapse animations */
+/* === Animated water background === */
+.water-bg {
+  background-color: #0B1426;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(16, 85, 125, 0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 50% at 75% 60%, rgba(14, 116, 144, 0.2) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 70% at 50% 80%, rgba(30, 58, 138, 0.2) 0%, transparent 70%);
+  background-size: 200% 200%;
+  animation: water-drift 25s ease-in-out infinite alternate;
+}
+
+@keyframes water-drift {
+  0%   { background-position: 0% 0%, 100% 100%, 50% 50%; }
+  33%  { background-position: 30% 20%, 70% 80%, 80% 30%; }
+  66%  { background-position: 60% 40%, 40% 20%, 20% 70%; }
+  100% { background-position: 100% 60%, 0% 40%, 60% 10%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .water-bg {
+    animation: none;
+  }
+}
+
+/* === Smooth collapse animations === */
 .collapse-content {
   display: grid;
   grid-template-rows: 0fr;
@@ -26,7 +49,7 @@
   overflow: hidden;
 }
 
-/* Horizontal scroll with snap */
+/* === Horizontal scroll with snap === */
 .hour-scroll {
   overflow-x: auto;
   overflow-y: hidden;
@@ -44,13 +67,20 @@
   scroll-snap-align: start;
 }
 
-/* Fade mask for horizontal scroll hint */
-.scroll-fade-right {
-  mask-image: linear-gradient(to right, black 85%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+/* === Main container === */
+.main-container {
+  width: 100%;
+  max-width: 100%;
 }
 
-/* Mobile menu animations */
+@media (min-width: 1400px) {
+  .main-container {
+    max-width: calc(100vw - 600px);
+    min-width: 800px;
+  }
+}
+
+/* === Animations === */
 .animate-fade-in {
   animation: fadeIn 200ms ease forwards;
 }
@@ -68,3 +98,4 @@
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
 }
+

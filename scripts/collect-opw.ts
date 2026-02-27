@@ -153,6 +153,61 @@ async function main() {
       `  ${r.date}: level=${r.niveau_eau_delta}m, water_temp=${r.temp_eau_c}°C`
     );
   }
+
+  // --- Recalculate cumulative degree-days ---
+  await computeDegreeDays();
+}
+
+async function computeDegreeDays() {
+  console.log("[collect-opw] Recalculating degree-days...");
+
+  const { data, error } = await supabase
+    .from("daily_weather")
+    .select("date, temp_eau_c, degres_jour_cumules")
+    .not("temp_eau_c", "is", null)
+    .order("date", { ascending: true });
+
+  if (error) {
+    console.error("[collect-opw] DJ fetch error:", error);
+    throw error;
+  }
+
+  if (!data || data.length === 0) {
+    console.log("[collect-opw] No rows with temp_eau_c, skipping DJ");
+    return;
+  }
+
+  // Rebuild full cumulative sum to ensure consistency
+  let cumul = 0;
+  const updates: { date: string; degres_jour_cumules: number }[] = [];
+
+  for (const row of data) {
+    cumul += Math.max(0, row.temp_eau_c);
+    const rounded = Math.round(cumul * 100) / 100;
+    if (row.degres_jour_cumules == null || row.degres_jour_cumules !== rounded) {
+      updates.push({ date: row.date, degres_jour_cumules: rounded });
+    }
+  }
+
+  if (updates.length === 0) {
+    console.log("[collect-opw] All degree-days already up to date");
+    return;
+  }
+
+  for (let i = 0; i < updates.length; i += 100) {
+    const batch = updates.slice(i, i + 100);
+    const { error: upsertError } = await supabase
+      .from("daily_weather")
+      .upsert(batch, { onConflict: "date" });
+    if (upsertError) {
+      console.error("[collect-opw] DJ upsert error:", upsertError);
+      throw upsertError;
+    }
+  }
+
+  console.log(
+    `[collect-opw] DJ updated: ${updates.length} rows (${updates[0].date} → ${updates[updates.length - 1].date}), final=${updates[updates.length - 1].degres_jour_cumules}`
+  );
 }
 
 main().catch((err) => {

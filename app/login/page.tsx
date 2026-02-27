@@ -4,10 +4,10 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] gap-8">
       <div className="text-center space-y-2">
-        <h1 className="text-2xl font-semibold text-slate-800 tracking-tight">
+        <h1 className="text-2xl font-bold text-white tracking-tight">
           Killykeen
         </h1>
-        <p className="text-sm text-slate-400">Tableau de bord</p>
+        <p className="text-sm text-white/40">Tableau de bord</p>
       </div>
       <PasswordGate />
     </div>

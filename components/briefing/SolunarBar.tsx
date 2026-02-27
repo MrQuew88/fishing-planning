@@ -2,9 +2,15 @@
 
 import { Solunar } from "@/lib/types";
 
+const D = "font-[family-name:var(--font-space)]";
+
 function timeToMinutes(time: string): number {
   const [h, m] = time.split(":").map(Number);
   return h * 60 + m;
+}
+
+function trimSeconds(time: string): string {
+  return time.slice(0, 5);
 }
 
 interface SolunarPeriod {
@@ -23,86 +29,53 @@ function getSolunarPeriods(solunar: Solunar): SolunarPeriod[] {
   return raw.filter((p): p is SolunarPeriod => p.start != null && p.end != null);
 }
 
-function solunarStatusLabel(periods: SolunarPeriod[], nowMinutes: number): string {
-  for (const p of periods) {
-    const s = timeToMinutes(p.start);
-    const e = timeToMinutes(p.end);
-    if (nowMinutes >= s && nowMinutes <= e) {
-      return p.type === "major"
-        ? `Majeure en cours \u2014 jusqu\u2019\u00e0 ${p.end}`
-        : `Mineure en cours \u2014 jusqu\u2019\u00e0 ${p.end}`;
-    }
-  }
-
-  const upcoming = periods
-    .filter((p) => timeToMinutes(p.start) > nowMinutes)
-    .sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
-
-  if (upcoming.length > 0) {
-    const next = upcoming[0];
-    return `Prochaine ${next.type === "major" ? "majeure" : "mineure"} : ${next.start}\u2013${next.end}`;
-  }
-
-  return "Aucune p\u00e9riode restante aujourd\u2019hui";
+function isActive(p: SolunarPeriod, nowMinutes: number): boolean {
+  return nowMinutes >= timeToMinutes(p.start) && nowMinutes <= timeToMinutes(p.end);
 }
 
-export default function SolunarBar({ solunar }: { solunar: Solunar }) {
-  const totalMinutes = 24 * 60;
-  const periods = getSolunarPeriods(solunar);
+function countdown(p: SolunarPeriod, nowMinutes: number): string | null {
+  const startMin = timeToMinutes(p.start);
+  if (startMin <= nowMinutes) return null;
+  const diff = startMin - nowMinutes;
+  const h = Math.floor(diff / 60);
+  const m = diff % 60;
+  if (h > 0) return `dans ${h}h${m > 0 ? m.toString().padStart(2, "0") : ""}`;
+  return `dans ${m}min`;
+}
 
+export default function SolunarText({ solunar }: { solunar: Solunar }) {
+  const periods = getSolunarPeriods(solunar);
   const now = new Date();
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
-  const nowPct = (nowMinutes / totalMinutes) * 100;
 
-  const label = solunarStatusLabel(periods, nowMinutes);
+  if (periods.length === 0) return null;
 
   return (
-    <div className="space-y-2">
-      <div className="relative h-3 bg-slate-100 rounded-full overflow-hidden">
+    <div className="bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-2xl px-5 py-4">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-base leading-relaxed">
         {periods.map((p, i) => {
-          const startMin = timeToMinutes(p.start);
-          const endMin = timeToMinutes(p.end);
-          const left = (startMin / totalMinutes) * 100;
-          const width = ((endMin - startMin) / totalMinutes) * 100;
+          const active = isActive(p, nowMinutes);
+          const isMajor = p.type === "major";
+          const label = isMajor ? "Majeure" : "Mineure";
+          const cd = !active ? countdown(p, nowMinutes) : null;
+
           return (
-            <div
-              key={i}
-              className={`absolute rounded-full ${
-                p.type === "major"
-                  ? "bg-amber-400 h-full top-0"
-                  : "bg-emerald-300/70 h-2.5 top-[1px]"
-              }`}
-              style={{ left: `${left}%`, width: `${Math.max(width, 1.5)}%` }}
-            />
+            <span key={i} className="inline-flex items-center gap-x-2">
+              {i > 0 && <span className="text-white/20">{"\u00b7"}</span>}
+              <span>
+                <span className={isMajor ? "text-[#F59E0B] font-semibold" : "text-[#22C55E] font-medium"}>
+                  {label}
+                </span>
+                {" "}
+                <span className={`${D} text-[#F1F5F9] ${active ? "font-bold" : ""}`}>
+                  {trimSeconds(p.start)}{"\u2013"}{trimSeconds(p.end)}
+                </span>
+                {active && <span className="text-white/55 font-bold ml-1">(en cours)</span>}
+                {cd && <span className="text-white/40 ml-1">{cd}</span>}
+              </span>
+            </span>
           );
         })}
-
-        {[6, 12, 18].map((h) => (
-          <div
-            key={h}
-            className="absolute top-0 h-full w-px bg-slate-300/50"
-            style={{ left: `${(h / 24) * 100}%` }}
-          />
-        ))}
-
-        <div
-          className="absolute top-[-2px] w-0.5 h-[calc(100%+4px)] bg-slate-800 rounded-full"
-          style={{ left: `${nowPct}%` }}
-        />
-      </div>
-
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-slate-500">{label}</span>
-        <span className="flex items-center gap-2">
-          <span className="flex items-center gap-1">
-            <span className="inline-block w-2.5 h-2 bg-amber-400 rounded-full" />
-            <span className="text-[10px] text-slate-400">Maj.</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="inline-block w-2.5 h-1.5 bg-emerald-300/70 rounded-full" />
-            <span className="text-[10px] text-slate-400">Min.</span>
-          </span>
-        </span>
       </div>
     </div>
   );

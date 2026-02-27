@@ -21,22 +21,22 @@ export default function Navigation() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/60">
-        <div className="max-w-2xl mx-auto px-4 flex items-center justify-between h-12">
-          <Link href="/" className="font-semibold text-slate-800 tracking-tight">
+      <nav className="sticky top-0 z-50 bg-[#0B1426]/90 backdrop-blur-xl border-b border-white/[0.06] py-2">
+        <div className="main-container mx-auto px-4 md:px-8 flex items-center justify-between min-h-[48px]">
+          <Link href="/" className="font-bold text-white text-xl tracking-tight">
             Killykeen
           </Link>
 
-          {/* Desktop tabs */}
-          <div className="hidden md:flex gap-1">
+          {/* Desktop pills */}
+          <div className="hidden md:flex gap-2">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                className={`px-6 py-3 rounded-full text-base font-medium transition-colors min-h-[48px] flex items-center ${
                   isActive(link.href)
-                    ? "bg-slate-800 text-white"
-                    : "text-slate-400 hover:text-slate-600"
+                    ? "bg-white/15 text-white"
+                    : "text-white/50 hover:text-white/80"
                 }`}
               >
                 {link.label}
@@ -47,11 +47,11 @@ export default function Navigation() {
           {/* Mobile burger */}
           <button
             onClick={() => setMenuOpen(true)}
-            className="md:hidden flex items-center justify-center w-10 h-10 -mr-2"
+            className="md:hidden flex items-center justify-center w-12 h-12 -mr-2"
             aria-label="Menu"
           >
             <svg
-              className="w-5 h-5 text-slate-600"
+              className="w-6 h-6 text-white/60"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -69,23 +69,21 @@ export default function Navigation() {
           className="fixed inset-0 z-[60] md:hidden"
           onClick={() => setMenuOpen(false)}
         >
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/20 animate-fade-in" />
+          <div className="absolute inset-0 bg-black/40 animate-fade-in" />
 
-          {/* Panel */}
           <div
-            className="absolute top-0 right-0 h-full w-64 bg-white shadow-xl animate-slide-in"
+            className="absolute top-0 right-0 h-full w-72 bg-[#0B1426]/95 backdrop-blur-2xl border-l border-white/[0.06] animate-slide-in"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-5 h-12 border-b border-slate-100">
-              <span className="text-sm font-medium text-slate-400">Menu</span>
+            <div className="flex items-center justify-between px-5 min-h-[64px] border-b border-white/[0.06]">
+              <span className="text-base font-medium text-white/40">Menu</span>
               <button
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-center w-10 h-10 -mr-2"
+                className="flex items-center justify-center w-12 h-12 -mr-2"
                 aria-label="Fermer"
               >
                 <svg
-                  className="w-5 h-5 text-slate-400"
+                  className="w-6 h-6 text-white/40"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -96,16 +94,16 @@ export default function Navigation() {
               </button>
             </div>
 
-            <div className="py-2">
+            <div className="py-3">
               {links.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className={`flex items-center px-5 py-3 text-sm transition-colors ${
+                  className={`flex items-center px-5 min-h-[48px] text-lg transition-colors ${
                     isActive(link.href)
-                      ? "text-slate-800 font-medium bg-slate-50"
-                      : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+                      ? "text-white font-bold bg-white/[0.06]"
+                      : "text-white/50 hover:text-white/80"
                   }`}
                 >
                   {link.label}

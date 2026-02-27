@@ -36,14 +36,14 @@ export default function PasswordGate() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Mot de passe"
-        className="bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-shadow shadow-sm"
+        className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 text-base text-white placeholder:text-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 transition-shadow"
         autoFocus
       />
-      {error && <p className="text-amber-600 text-xs text-center">{error}</p>}
+      {error && <p className="text-[#F59E0B] text-sm text-center">{error}</p>}
       <button
         type="submit"
         disabled={loading}
-        className="bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-white rounded-xl px-4 py-3 text-sm font-medium transition-colors"
+        className="bg-white/10 hover:bg-white/15 disabled:opacity-50 text-white rounded-[20px] px-4 py-3 text-base font-medium transition-colors border border-white/[0.08]"
       >
         {loading ? "..." : "Entrer"}
       </button>

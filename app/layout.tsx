@@ -1,16 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/layout/Navigation";
 
-const inter = Inter({
-  variable: "--font-geist-sans",
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space",
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
 export const viewport: Viewport = {
@@ -32,10 +34,10 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#F8F9FA] text-slate-800 min-h-screen overflow-x-hidden`}
+        className={`${jakarta.variable} ${spaceGrotesk.variable} font-sans antialiased water-bg text-[#F1F5F9] min-h-screen overflow-x-hidden`}
       >
         <Navigation />
-        <main className="max-w-2xl mx-auto px-4 pb-12 overflow-x-hidden">{children}</main>
+        <main className="main-container mx-auto px-4 md:px-8 pb-12 overflow-x-hidden">{children}</main>
       </body>
     </html>
   );
