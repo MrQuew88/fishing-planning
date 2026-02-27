@@ -5,7 +5,7 @@
  */
 
 import { config } from "dotenv";
-config({ path: ".env.local" });
+config({ path: ".env.local", override: false });
 import { createClient } from "@supabase/supabase-js";
 
 const OFFSET = 1.67;
