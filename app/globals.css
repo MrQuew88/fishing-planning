@@ -2,5 +2,69 @@
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-jetbrains-mono);
+  --color-lake: #16a34a;
+  --color-lake-light: #dcfce7;
+  --color-amber: #d97706;
+  --color-amber-light: #fef3c7;
+  --color-surface: #F8F9FA;
+  --color-card: #FFFFFF;
+}
+
+/* Smooth collapse animations */
+.collapse-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms ease;
+}
+
+.collapse-content[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+
+.collapse-inner {
+  overflow: hidden;
+}
+
+/* Horizontal scroll with snap */
+.hour-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  max-width: 100%;
+}
+
+.hour-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.hour-snap {
+  scroll-snap-align: start;
+}
+
+/* Fade mask for horizontal scroll hint */
+.scroll-fade-right {
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+}
+
+/* Mobile menu animations */
+.animate-fade-in {
+  animation: fadeIn 200ms ease forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 200ms ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
 }

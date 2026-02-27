@@ -78,6 +78,82 @@ async function fetchWeather(
   return json.daily as OpenMeteoDaily;
 }
 
+interface OpenMeteoHourly {
+  time: string[];
+  temperature_2m: (number | null)[];
+  wind_speed_10m: (number | null)[];
+  wind_direction_10m: (number | null)[];
+  wind_gusts_10m: (number | null)[];
+  pressure_msl: (number | null)[];
+  precipitation_probability: (number | null)[];
+  precipitation: (number | null)[];
+  cloud_cover: (number | null)[];
+}
+
+async function collectForecast(): Promise<void> {
+  console.log("[collect-weather] Fetching 7-day hourly forecast...");
+
+  const params = new URLSearchParams({
+    latitude: String(LAT),
+    longitude: String(LON),
+    hourly:
+      "temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,pressure_msl,precipitation_probability,precipitation,cloud_cover",
+    forecast_days: "7",
+    timezone: "Europe/Dublin",
+  });
+
+  const url = `https://api.open-meteo.com/v1/forecast?${params}`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Open-Meteo forecast error ${res.status}: ${await res.text()}`);
+  }
+
+  const json = await res.json();
+  const hourly = json.hourly as OpenMeteoHourly;
+
+  if (!hourly.time || hourly.time.length === 0) {
+    console.log("[collect-weather] No forecast data returned");
+    return;
+  }
+
+  console.log(`[collect-weather] Got ${hourly.time.length} hourly forecast rows`);
+
+  // Clear existing forecast data
+  const { error: deleteError } = await supabase
+    .from("hourly_forecast")
+    .delete()
+    .gte("datetime", "2000-01-01");
+
+  if (deleteError) {
+    console.error("[collect-weather] Error clearing hourly_forecast:", deleteError);
+    throw deleteError;
+  }
+
+  const rows = hourly.time.map((datetime, i) => ({
+    datetime,
+    temperature_c: hourly.temperature_2m[i],
+    vent_vitesse_kmh: hourly.wind_speed_10m[i],
+    vent_direction: degreesToCardinal(hourly.wind_direction_10m[i]),
+    vent_rafales_kmh: hourly.wind_gusts_10m[i],
+    pression_hpa: hourly.pressure_msl[i],
+    pluie_probabilite: hourly.precipitation_probability[i],
+    pluie_intensite_mm: hourly.precipitation[i],
+    couverture_nuageuse_pct: hourly.cloud_cover[i],
+  }));
+
+  for (let i = 0; i < rows.length; i += 100) {
+    const batch = rows.slice(i, i + 100);
+    const { error } = await supabase.from("hourly_forecast").insert(batch);
+
+    if (error) {
+      console.error(`[collect-weather] Forecast insert error (batch ${i}):`, error);
+      throw error;
+    }
+  }
+
+  console.log(`[collect-weather] Forecast done. ${rows.length} rows inserted.`);
+}
+
 async function main() {
   const isBackfill = process.argv.includes("--backfill");
 
@@ -145,6 +221,9 @@ async function main() {
   console.log(
     `[collect-weather] Done. ${rows.length} rows upserted (${rows[0].date} → ${rows[rows.length - 1].date})`
   );
+
+  // Always collect forecast (both daily and backfill modes)
+  await collectForecast();
 }
 
 main().catch((err) => {

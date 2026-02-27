@@ -168,24 +168,41 @@ async function main() {
 
     console.log(`[collect-solunar] Done. ${count} rows upserted.`);
   } else {
-    const dateStr = today();
-    const dateCompact = formatDateCompact(new Date());
+    // Daily mode: collect today + 6 days (7 days total for forecast page)
+    const totalDays = 7;
+    console.log(`[collect-solunar] Fetching ${totalDays} days starting from ${today()}`);
 
-    console.log(`[collect-solunar] Fetching for ${dateStr}`);
+    let count = 0;
+    const current = new Date();
 
-    const data = await fetchSolunar(dateCompact);
-    const row = buildRow(dateStr, data);
+    for (let d = 0; d < totalDays; d++) {
+      const dateStr = formatDate(current);
+      const dateCompact = formatDateCompact(current);
 
-    const { error } = await supabase
-      .from("solunar")
-      .upsert([row], { onConflict: "date" });
+      try {
+        const data = await fetchSolunar(dateCompact);
+        const row = buildRow(dateStr, data);
 
-    if (error) {
-      console.error("[collect-solunar] Upsert error:", error);
-      throw error;
+        const { error } = await supabase
+          .from("solunar")
+          .upsert([row], { onConflict: "date" });
+
+        if (error) {
+          console.error(`[collect-solunar] Upsert error for ${dateStr}:`, error);
+        } else {
+          count++;
+        }
+      } catch (err) {
+        console.error(`[collect-solunar] Error fetching ${dateStr}:`, err);
+      }
+
+      current.setDate(current.getDate() + 1);
+
+      // Rate limiting: 500ms between requests
+      if (d < totalDays - 1) await sleep(500);
     }
 
-    console.log(`[collect-solunar] Done. 1 row upserted for ${dateStr}.`);
+    console.log(`[collect-solunar] Done. ${count} rows upserted.`);
   }
 }
 
