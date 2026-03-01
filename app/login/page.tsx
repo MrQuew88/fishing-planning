@@ -7,7 +7,7 @@ export default function LoginPage() {
         <h1 className="text-2xl font-bold text-white tracking-tight">
           Killykeen
         </h1>
-        <p className="text-sm text-white/40">Tableau de bord</p>
+        <p className="text-lg text-white/70">Tableau de bord</p>
       </div>
       <PasswordGate />
     </div>

@@ -14,7 +14,7 @@ export default function HistorySection({ data }: { data: DailyWeather[] }) {
 
   if (!data.length) {
     return (
-      <p className="text-base text-white/40 py-8 text-center">
+      <p className="text-lg text-white/70 py-8 text-center">
         Aucune donn\u00e9e historique disponible.
       </p>
     );
@@ -33,7 +33,7 @@ export default function HistorySection({ data }: { data: DailyWeather[] }) {
       <div>
         <button
           onClick={() => setShowTable(!showTable)}
-          className="flex items-center gap-2 text-base font-medium text-white/40 hover:text-white/60 transition-colors py-2"
+          className="flex items-center gap-2 text-base font-medium text-white/70 hover:text-white/70 transition-colors py-3 min-h-[48px]"
         >
           <svg
             className={`w-4 h-4 transition-transform duration-300 ${showTable ? "rotate-180" : ""}`}

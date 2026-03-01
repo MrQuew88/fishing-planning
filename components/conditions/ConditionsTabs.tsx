@@ -13,7 +13,7 @@ interface ConditionsTabsProps {
 
 const tabs = [
   { key: "historique" as const, label: "Historique" },
-  { key: "previsions" as const, label: "Prévisions" },
+  { key: "previsions" as const, label: "Pr\u00e9visions" },
 ];
 
 export default function ConditionsTabs({
@@ -31,10 +31,10 @@ export default function ConditionsTabs({
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-5 py-2 rounded-full text-sm font-bold uppercase tracking-[0.1em] transition-colors ${
+            className={`px-6 py-3 rounded-full text-base font-bold uppercase tracking-wide transition-colors min-h-[48px] ${
               tab === t.key
                 ? "bg-white/10 text-white"
-                : "text-white/40 hover:text-white/60"
+                : "text-white/70 hover:text-white/70"
             }`}
           >
             {t.label}

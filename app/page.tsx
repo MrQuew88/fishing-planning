@@ -1,8 +1,9 @@
 import { supabase } from "@/lib/supabase";
 import { HourlyForecast, Solunar } from "@/lib/types";
 import TodayHours from "@/components/briefing/TodayHours";
-import SolunarText from "@/components/briefing/SolunarBar";
-import SunriseSunset from "@/components/briefing/SunriseSunset";
+import SolunarSection from "@/components/briefing/SolunarBar";
+import GlassCard from "@/components/ui/GlassCard";
+import SectionTitle from "@/components/ui/SectionTitle";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +45,11 @@ function getTodayHours(forecast: HourlyForecast[]): HourlyForecast[] {
   });
 }
 
+function trimSeconds(time: string | null): string {
+  if (!time) return "\u2013";
+  return time.slice(0, 5);
+}
+
 export default async function BriefingPage() {
   const [forecast, solunar] = await Promise.all([
     getForecastData(),
@@ -56,32 +62,38 @@ export default async function BriefingPage() {
   const todaySolunar = solunarMap.get(todayStr);
 
   return (
-    <div className="space-y-6 pt-6">
-      {/* 1. Today's hourly cards */}
-      {todayHours.length > 0 && (
-        <section className="space-y-4">
-          <h2 className="text-base font-bold text-[#F1F5F9] uppercase tracking-[0.15em] px-1">
-            Aujourd&apos;hui heure par heure
-          </h2>
-          <TodayHours hours={todayHours} />
-        </section>
-      )}
+    <div className="space-y-8 pt-6">
+      {/* Header with sunrise/sunset */}
+      <div className="flex items-center justify-between">
+        <SectionTitle>Aujourd&apos;hui heure par heure</SectionTitle>
+        {todaySolunar && (
+          <span className="text-lg text-white/75 font-medium">
+            {"\u2600\uFE0F"}{" "}
+            <span className="font-[family-name:var(--font-space)] font-bold text-white">
+              {trimSeconds(todaySolunar.lever_soleil)}
+            </span>
+            {" \u2014 "}
+            <span className="font-[family-name:var(--font-space)] font-bold text-white">
+              {trimSeconds(todaySolunar.coucher_soleil)}
+            </span>
+            {" \uD83C\uDF19"}
+          </span>
+        )}
+      </div>
 
-      {/* 2. Solunar text with countdown */}
-      {todaySolunar && <SolunarText solunar={todaySolunar} />}
+      {/* Today's hourly cards */}
+      {todayHours.length > 0 && <TodayHours hours={todayHours} />}
 
-      {/* 3. Sunrise / Sunset */}
-      {todaySolunar && <SunriseSunset solunar={todaySolunar} />}
+      {/* Solunar structured section */}
+      {todaySolunar && <SolunarSection solunar={todaySolunar} />}
 
-      {/* 4. Tactical briefing placeholder */}
-      <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-        <h2 className="text-base font-bold text-[#F1F5F9] uppercase tracking-[0.15em] mb-3">
-          Briefing tactique
-        </h2>
-        <p className="text-base text-white/40">
+      {/* Tactical briefing placeholder */}
+      <GlassCard>
+        <SectionTitle>Briefing tactique</SectionTitle>
+        <p className="text-lg text-white/70 mt-3">
           Analyse des conditions et plan de p&ecirc;che — bient&ocirc;t disponible.
         </p>
-      </section>
+      </GlassCard>
     </div>
   );
 }

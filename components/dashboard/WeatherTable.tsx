@@ -27,18 +27,18 @@ function fmt(v: unknown): string {
 
 export default function WeatherTable({ data }: { data: DailyWeather[] }) {
   if (!data.length) {
-    return <p className="text-base text-white/40">Aucune donn\u00e9e disponible.</p>;
+    return <p className="text-lg text-white/70">Aucune donn&eacute;e disponible.</p>;
   }
 
   return (
     <div className="overflow-x-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl">
-      <table className="w-full text-sm">
+      <table className="w-full text-base">
         <thead>
           <tr className="border-b border-white/[0.06]">
             {columns.map((col) => (
               <th
                 key={col.key}
-                className="px-3 py-2.5 text-left font-bold text-white/40 whitespace-nowrap"
+                className="px-3 py-3 text-left font-bold text-white/70 whitespace-nowrap text-base"
               >
                 {col.label}
               </th>

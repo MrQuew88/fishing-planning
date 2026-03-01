@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 const links = [
   { href: "/", label: "Briefing" },
   { href: "/conditions", label: "Conditions" },
+  { href: "/zones", label: "Zones" },
   { href: "/arsenal", label: "Arsenal" },
 ];
 
@@ -33,10 +34,10 @@ export default function Navigation() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-6 py-3 rounded-full text-base font-medium transition-colors min-h-[48px] flex items-center ${
+                className={`px-6 py-3 rounded-full text-lg font-medium transition-colors min-h-[48px] flex items-center ${
                   isActive(link.href)
                     ? "bg-white/15 text-white"
-                    : "text-white/50 hover:text-white/80"
+                    : "text-white/70 hover:text-white/80"
                 }`}
               >
                 {link.label}
@@ -51,7 +52,7 @@ export default function Navigation() {
             aria-label="Menu"
           >
             <svg
-              className="w-6 h-6 text-white/60"
+              className="w-6 h-6 text-white/80"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -76,14 +77,14 @@ export default function Navigation() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-5 min-h-[64px] border-b border-white/[0.06]">
-              <span className="text-base font-medium text-white/40">Menu</span>
+              <span className="text-lg font-medium text-white/70">Menu</span>
               <button
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center justify-center w-12 h-12 -mr-2"
                 aria-label="Fermer"
               >
                 <svg
-                  className="w-6 h-6 text-white/40"
+                  className="w-6 h-6 text-white/70"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -103,7 +104,7 @@ export default function Navigation() {
                   className={`flex items-center px-5 min-h-[48px] text-lg transition-colors ${
                     isActive(link.href)
                       ? "text-white font-bold bg-white/[0.06]"
-                      : "text-white/50 hover:text-white/80"
+                      : "text-white/70 hover:text-white/80"
                   }`}
                 >
                   {link.label}

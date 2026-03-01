@@ -43,33 +43,33 @@ function trimSeconds(time: string): string {
   return time.slice(0, 5);
 }
 
-function conditionBadge(hours: HourlyForecast[]): { label: string; bg: string; text: string } {
+function conditionBadge(hours: HourlyForecast[]): { label: string; classes: string } {
   const dayH = hours.filter((h) => {
     const hr = parseInt(h.datetime.slice(11, 13), 10);
     return hr >= 7 && hr <= 19;
   });
-  if (dayH.length === 0) return { label: "", bg: "", text: "" };
+  if (dayH.length === 0) return { label: "", classes: "" };
 
   const avgWind = dayH.reduce((s, h) => s + (h.vent_vitesse_kmh ?? 0), 0) / dayH.length;
   const avgRain = dayH.reduce((s, h) => s + (h.pluie_probabilite ?? 0), 0) / dayH.length;
   const maxGust = Math.max(...dayH.map((h) => h.vent_rafales_kmh ?? 0));
 
-  if (avgRain > 60) return { label: "Pluvieux", bg: "bg-white/[0.06]", text: "text-white/50" };
-  if (maxGust > 50 || avgWind > 35) return { label: "Venteux", bg: "bg-[#F59E0B]/10", text: "text-[#F59E0B]" };
-  if (avgRain > 30) return { label: "Averses", bg: "bg-white/[0.06]", text: "text-white/50" };
-  if (avgWind > 20) return { label: "Brise", bg: "bg-white/[0.06]", text: "text-white/55" };
-  return { label: "Calme", bg: "bg-[#22C55E]/10", text: "text-[#22C55E]" };
+  if (avgRain > 60) return { label: "Pluvieux", classes: "bg-white/[0.06] text-white/75" };
+  if (maxGust > 50 || avgWind > 35) return { label: "Venteux", classes: "bg-[#F59E0B]/20 text-[#F59E0B]" };
+  if (avgRain > 30) return { label: "Averses", classes: "bg-white/[0.06] text-white/75" };
+  if (avgWind > 20) return { label: "Brise", classes: "bg-white/[0.06] text-white/75" };
+  return { label: "Calme", classes: "bg-[#22C55E]/20 text-[#22C55E]" };
 }
 
 function pressureTrendDay(hours: HourlyForecast[]): { label: string; arrow: string; color: string } {
   const valid = hours.filter((h) => h.pression_hpa != null);
-  if (valid.length < 4) return { label: "Stable", arrow: "\u2192", color: "text-white/55" };
+  if (valid.length < 4) return { label: "Stable", arrow: "\u2192", color: "text-white/75" };
   const first = valid[0].pression_hpa!;
   const last = valid[valid.length - 1].pression_hpa!;
   const delta = last - first;
   if (delta > 3) return { label: "Hausse", arrow: "\u2197", color: "text-[#22C55E]" };
   if (delta < -3) return { label: "Baisse", arrow: "\u2198", color: "text-[#EF4444]/80" };
-  return { label: "Stable", arrow: "\u2192", color: "text-white/55" };
+  return { label: "Stable", arrow: "\u2192", color: "text-white/75" };
 }
 
 function DaySummaryCard({
@@ -112,7 +112,6 @@ function DaySummaryCard({
 
   const badge = conditionBadge(hours);
 
-  // Solunar compact line
   const majors: string[] = [];
   const minors: string[] = [];
   if (solunar) {
@@ -126,7 +125,7 @@ function DaySummaryCard({
     <div className="bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-2xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full px-5 py-5 active:bg-white/[0.02] transition-colors text-left"
+        className="w-full px-6 py-5 active:bg-white/[0.02] transition-colors text-left"
       >
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
@@ -134,7 +133,7 @@ function DaySummaryCard({
               {formatDayHeader(date)}
             </span>
             {badge.label && (
-              <span className={`text-sm font-semibold px-2.5 py-0.5 rounded-full ${badge.bg} ${badge.text}`}>
+              <span className={`text-base font-semibold px-3 py-1 rounded-full ${badge.classes}`}>
                 {badge.label}
               </span>
             )}
@@ -156,57 +155,57 @@ function DaySummaryCard({
               ? `${Math.round(tMin)}\u00b0\u2013${Math.round(tMax)}\u00b0`
               : "\u2013"}
           </span>
-          <span className="flex items-baseline gap-1.5 text-white/55">
+          <span className="flex items-baseline gap-1.5 text-white/75">
             <span className={`${D} font-bold text-2xl text-white/70`}>{avgWind ?? "\u2013"}</span>
-            <span className="text-base">km/h {dominantDir}</span>
+            <span className="text-base font-medium">km/h {dominantDir}</span>
           </span>
-          <span className={maxRainProb > 50 ? "text-[#F59E0B]" : "text-white/40"}>
+          <span className={maxRainProb > 50 ? "text-[#F59E0B]" : "text-white/70"}>
             <span className={`${D} font-bold text-2xl`}>{Math.round(maxRainProb)}</span>
-            <span className="text-base">%</span>
+            <span className="text-base font-medium">%</span>
           </span>
         </div>
       </button>
 
       <div className="collapse-content" data-open={open}>
         <div className="collapse-inner">
-          <div className="px-5 pb-5 pt-2 border-t border-white/[0.06]">
+          <div className="px-6 pb-6 pt-3 border-t border-white/[0.06]">
             <div className="grid grid-cols-2 gap-x-8 gap-y-4">
               <div>
-                <span className="text-base text-white/40">Vent dominant</span>
+                <span className="text-base text-white/70 font-medium">Vent dominant</span>
                 <div className={`${D} font-bold text-lg text-white/80 mt-1`}>
                   {dominantDir} {avgWind ?? "\u2013"} km/h
                 </div>
               </div>
               <div>
-                <span className="text-base text-white/40">Rafales max</span>
+                <span className="text-base text-white/70 font-medium">Rafales max</span>
                 <div className={`${D} font-bold text-lg text-white/80 mt-1`}>
                   {maxGust > 0 ? `${Math.round(maxGust)} km/h` : "\u2013"}
                 </div>
               </div>
               <div>
-                <span className="text-base text-white/40">Pression</span>
+                <span className="text-base text-white/70 font-medium">Pression</span>
                 <div className={`${D} font-bold text-lg mt-1 ${pTrend.color}`}>
                   {pTrend.arrow} {pTrend.label} {avgPressure != null ? `(${avgPressure})` : ""}
                 </div>
               </div>
               <div>
-                <span className="text-base text-white/40">Pluie</span>
+                <span className="text-base text-white/70 font-medium">Pluie</span>
                 <div className={`${D} font-bold text-lg text-white/80 mt-1`}>
                   {Math.round(maxRainProb)}% max{rainCumul > 0 ? ` \u00b7 ${rainCumul.toFixed(1)} mm` : ""}
                 </div>
               </div>
               {solunar && (
                 <div>
-                  <span className="text-base text-white/40">Soleil</span>
-                  <div className="text-lg text-white/80 mt-1">
+                  <span className="text-base text-white/70 font-medium">Soleil</span>
+                  <div className={`${D} text-lg text-white/80 font-semibold mt-1`}>
                     {solunar.lever_soleil ? trimSeconds(solunar.lever_soleil) : "\u2013"} \u2013 {solunar.coucher_soleil ? trimSeconds(solunar.coucher_soleil) : "\u2013"}
                   </div>
                 </div>
               )}
               {solunar && (
                 <div>
-                  <span className="text-base text-white/40">Lune</span>
-                  <div className="text-lg text-white/80 mt-1">
+                  <span className="text-base text-white/70 font-medium">Lune</span>
+                  <div className="text-lg text-white/80 font-semibold mt-1">
                     {moonEmoji(solunar.moon_illumination)}{" "}
                     {solunar.moon_illumination != null ? `${Math.round(solunar.moon_illumination)}%` : "\u2013"}
                   </div>
@@ -215,7 +214,7 @@ function DaySummaryCard({
             </div>
 
             {(majors.length > 0 || minors.length > 0) && (
-              <p className="text-base mt-4 pt-4 border-t border-white/[0.06]">
+              <p className="text-base font-semibold mt-4 pt-4 border-t border-white/[0.06]">
                 {majors.length > 0 && <span className="text-[#F59E0B]">Maj. {majors.join(" / ")}</span>}
                 {majors.length > 0 && minors.length > 0 && <span className="text-white/20"> {"\u00b7"} </span>}
                 {minors.length > 0 && <span className="text-[#22C55E]">Min. {minors.join(" / ")}</span>}
@@ -235,14 +234,14 @@ export default function ForecastWeek({ forecast, solunar }: ForecastWeekProps) {
 
   if (days.length === 0) {
     return (
-      <p className="text-lg text-white/40 py-8 text-center">
-        Aucune prévision disponible.
+      <p className="text-lg text-white/70 py-8 text-center">
+        Aucune pr&eacute;vision disponible.
       </p>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {days.map((day, i) => (
         <DaySummaryCard
           key={day}

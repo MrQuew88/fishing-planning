@@ -37,18 +37,18 @@ export default function WindDirectionChart({ data }: { data: DailyWeather[] }) {
   }));
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
-      <h3 className="text-base font-bold text-white/60 uppercase tracking-[0.15em] mb-1">
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+      <h3 className="text-xl font-bold text-[#F1F5F9] uppercase tracking-wide mb-1">
         Direction du vent
       </h3>
       <div className="flex gap-3 mb-4">
-        <span className="text-xs text-white/60">
+        <span className="text-base text-white/80">
           <span style={{ color: "#22C55E" }}>{"\u25CF"}</span> &lt;20
         </span>
-        <span className="text-xs text-white/60">
+        <span className="text-base text-white/80">
           <span style={{ color: "#F59E0B" }}>{"\u25CF"}</span> 20-40
         </span>
-        <span className="text-xs text-white/60">
+        <span className="text-base text-white/80">
           <span style={{ color: "rgba(255,255,255,0.4)" }}>{"\u25CF"}</span> &gt;40 km/h
         </span>
       </div>

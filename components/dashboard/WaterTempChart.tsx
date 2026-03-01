@@ -17,8 +17,8 @@ export default function WaterTempChart({ data }: { data: DailyWeather[] }) {
   const sorted = [...data].sort((a, b) => a.date.localeCompare(b.date));
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
-      <h3 className="text-base font-bold text-white/60 uppercase tracking-[0.15em] mb-4">
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+      <h3 className="text-xl font-bold text-[#F1F5F9] uppercase tracking-wide mb-4">
         Temp. eau — zone de fraie 8-12°C
       </h3>
       <ResponsiveContainer width="100%" height={200}>

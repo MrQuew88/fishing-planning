@@ -4,11 +4,6 @@ import { Solunar } from "@/lib/types";
 
 const D = "font-[family-name:var(--font-space)]";
 
-function timeToMinutes(time: string): number {
-  const [h, m] = time.split(":").map(Number);
-  return h * 60 + m;
-}
-
 function trimSeconds(time: string): string {
   return time.slice(0, 5);
 }
@@ -29,54 +24,46 @@ function getSolunarPeriods(solunar: Solunar): SolunarPeriod[] {
   return raw.filter((p): p is SolunarPeriod => p.start != null && p.end != null);
 }
 
-function isActive(p: SolunarPeriod, nowMinutes: number): boolean {
-  return nowMinutes >= timeToMinutes(p.start) && nowMinutes <= timeToMinutes(p.end);
-}
-
-function countdown(p: SolunarPeriod, nowMinutes: number): string | null {
-  const startMin = timeToMinutes(p.start);
-  if (startMin <= nowMinutes) return null;
-  const diff = startMin - nowMinutes;
-  const h = Math.floor(diff / 60);
-  const m = diff % 60;
-  if (h > 0) return `dans ${h}h${m > 0 ? m.toString().padStart(2, "0") : ""}`;
-  return `dans ${m}min`;
-}
-
-export default function SolunarText({ solunar }: { solunar: Solunar }) {
+export default function SolunarSection({ solunar }: { solunar: Solunar }) {
   const periods = getSolunarPeriods(solunar);
-  const now = new Date();
-  const nowMinutes = now.getHours() * 60 + now.getMinutes();
-
   if (periods.length === 0) return null;
 
-  return (
-    <div className="bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-2xl px-5 py-4">
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-base leading-relaxed">
-        {periods.map((p, i) => {
-          const active = isActive(p, nowMinutes);
-          const isMajor = p.type === "major";
-          const label = isMajor ? "Majeure" : "Mineure";
-          const cd = !active ? countdown(p, nowMinutes) : null;
+  const majors = periods.filter((p) => p.type === "major");
+  const minors = periods.filter((p) => p.type === "minor");
 
-          return (
-            <span key={i} className="inline-flex items-center gap-x-2">
-              {i > 0 && <span className="text-white/20">{"\u00b7"}</span>}
-              <span>
-                <span className={isMajor ? "text-[#F59E0B] font-semibold" : "text-[#22C55E] font-medium"}>
-                  {label}
-                </span>
-                {" "}
-                <span className={`${D} text-[#F1F5F9] ${active ? "font-bold" : ""}`}>
-                  {trimSeconds(p.start)}{"\u2013"}{trimSeconds(p.end)}
-                </span>
-                {active && <span className="text-white/55 font-bold ml-1">(en cours)</span>}
-                {cd && <span className="text-white/40 ml-1">{cd}</span>}
-              </span>
+  return (
+    <div className="bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-2xl px-6 py-6 space-y-5">
+      {majors.length > 0 && (
+        <div>
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span className="text-base font-bold uppercase tracking-wide text-[#F59E0B]">
+              Majeures
             </span>
-          );
-        })}
-      </div>
+            <span className={`${D} text-xl font-bold text-white`}>
+              {majors.map((p) => `${trimSeconds(p.start)}\u2013${trimSeconds(p.end)}`).join(" \u00b7 ")}
+            </span>
+          </div>
+          <p className="text-lg italic text-white/70 mt-1">
+            P&eacute;riodes de forte activit&eacute; des poissons. Meilleur moment pour p&ecirc;cher.
+          </p>
+        </div>
+      )}
+
+      {minors.length > 0 && (
+        <div>
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span className="text-base font-bold uppercase tracking-wide text-[#22C55E]">
+              Mineures
+            </span>
+            <span className={`${D} text-xl font-bold text-white`}>
+              {minors.map((p) => `${trimSeconds(p.start)}\u2013${trimSeconds(p.end)}`).join(" \u00b7 ")}
+            </span>
+          </div>
+          <p className="text-lg italic text-white/70 mt-1">
+            P&eacute;riodes d&apos;activit&eacute; mod&eacute;r&eacute;e.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

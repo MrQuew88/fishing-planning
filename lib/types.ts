@@ -67,3 +67,27 @@ export interface TacticalBriefing {
   conditions_snapshot: Record<string, unknown> | null;
   created_at: string;
 }
+
+export interface FishingZone {
+  id: string;
+  zone_name: string;
+  name: string;
+  lat: number;
+  lng: number;
+  radius_m: number;
+  depth_min: number;
+  depth_max: number;
+  type: string;
+  profile: string;
+  orientation: string | null;
+  wind_sheltered: string[];
+  wind_exposed: string[];
+  post_spawn_score: number;
+  vegetation: string | null;
+  is_spawning_zone: boolean | null;
+  spawning_notes: string | null;
+  notes: string | null;
+  google_maps_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
