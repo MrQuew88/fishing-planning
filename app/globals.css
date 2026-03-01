@@ -38,7 +38,7 @@
 .collapse-content {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 300ms ease;
+  transition: grid-template-rows 200ms ease;
 }
 
 .collapse-content[data-open="true"] {

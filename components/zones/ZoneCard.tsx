@@ -24,9 +24,10 @@ interface Props {
 
 export default function ZoneCard({ zone }: Props) {
   const [mapsUrl, setMapsUrl] = useState(zone.google_maps_url || "");
+  const [mapsInput, setMapsInput] = useState("");
+  const [editingMaps, setEditingMaps] = useState(!zone.google_maps_url);
   const [vegetation, setVegetation] = useState(zone.vegetation || "");
-  const [isSpawning, setIsSpawning] = useState<boolean | null>(zone.is_spawning_zone);
-  const [spawningNotes, setSpawningNotes] = useState(zone.spawning_notes || "");
+  const [isSpawning, setIsSpawning] = useState(zone.is_spawning_zone === true);
   const [saving, setSaving] = useState(false);
 
   const save = useCallback(
@@ -129,95 +130,82 @@ export default function ZoneCard({ zone }: Props) {
           />
         </div>
 
-        {/* Spawning zone */}
+        {/* Spawning zone toggle */}
         <div className="flex items-center gap-3">
           <label className="text-lg text-white/70 font-medium w-28 shrink-0">Zone de fraie</label>
-          <div className="flex gap-2">
-            {[
-              { value: true, label: "Oui" },
-              { value: false, label: "Non" },
-              { value: null, label: "?" },
-            ].map((opt) => (
-              <button
-                key={String(opt.value)}
-                onClick={() => {
-                  setIsSpawning(opt.value as boolean | null);
-                  save({ is_spawning_zone: opt.value as boolean | null });
-                }}
-                className={`px-4 py-2 text-base font-semibold rounded-full border transition-colors min-h-[48px] ${
-                  isSpawning === opt.value
-                    ? "bg-white/15 border-white/20 text-white"
-                    : "border-white/10 text-white/70 hover:text-white/70"
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Spawning notes */}
-        <div className="flex items-center gap-3">
-          <label className="text-lg text-white/70 font-medium w-28 shrink-0">Notes fraie</label>
-          <input
-            type="text"
-            value={spawningNotes}
-            onChange={(e) => setSpawningNotes(e.target.value)}
-            onBlur={() => save({ spawning_notes: spawningNotes || null })}
-            placeholder="Non renseigné"
-            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-lg text-white placeholder:text-white/40 focus:outline-none focus:border-amber-500/50 transition-colors min-h-[48px]"
-          />
+          <button
+            role="switch"
+            aria-checked={isSpawning}
+            onClick={() => {
+              const next = !isSpawning;
+              setIsSpawning(next);
+              save({ is_spawning_zone: next });
+            }}
+            className={`relative w-11 h-6 rounded-full transition-colors duration-200 shrink-0 ${
+              isSpawning ? "bg-[#22C55E]" : "bg-white/15"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform duration-200 ${
+                isSpawning ? "translate-x-5" : "translate-x-0"
+              }`}
+            />
+          </button>
         </div>
 
         {/* Google Maps link */}
         <div className="flex items-center gap-3">
           <label className="text-lg text-white/70 font-medium w-28 shrink-0">Google Maps</label>
-          {mapsUrl ? (
+          {editingMaps ? (
+            <div className="flex flex-col md:flex-row gap-2 flex-1 min-w-0">
+              <input
+                type="text"
+                value={mapsInput}
+                onChange={(e) => setMapsInput(e.target.value)}
+                placeholder="Coller un lien Google Maps"
+                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-lg text-white placeholder:text-white/40 focus:outline-none focus:border-amber-500/50 transition-colors min-h-[48px]"
+              />
+              <button
+                onClick={() => {
+                  if (!mapsInput.trim()) return;
+                  const url = mapsInput.trim();
+                  setMapsUrl(url);
+                  setEditingMaps(false);
+                  const fields: Partial<FishingZone> = { google_maps_url: url };
+                  const m = url.match(/@(-?\d+\.?\d+),(-?\d+\.?\d+)/) ||
+                            url.match(/[?&]q=(-?\d+\.?\d+),(-?\d+\.?\d+)/);
+                  if (m) {
+                    fields.lat = parseFloat(m[1]);
+                    fields.lng = parseFloat(m[2]);
+                  }
+                  save(fields);
+                  setMapsInput("");
+                }}
+                className="bg-amber-500/20 text-amber-500 font-semibold rounded-xl px-5 py-3 text-lg min-h-[48px] shrink-0 transition-colors hover:bg-amber-500/30"
+              >
+                Valider
+              </button>
+            </div>
+          ) : (
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <a
                 href={mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-lg text-blue-400/80 hover:text-blue-300 transition-colors truncate"
+                className="text-lg text-[#F59E0B]/80 hover:text-[#F59E0B] transition-colors truncate"
               >
                 📍 Voir sur Google Maps
               </a>
               <button
                 onClick={() => {
-                  setMapsUrl("");
-                  save({ google_maps_url: null });
+                  setMapsInput(mapsUrl);
+                  setEditingMaps(true);
                 }}
-                className="text-white/30 hover:text-white/80 text-base shrink-0 min-h-[48px] px-2"
+                className="text-white/50 hover:text-white/80 text-base shrink-0 min-h-[48px] px-2 transition-colors"
               >
-                ✕
+                Modifier
               </button>
             </div>
-          ) : (
-            <input
-              type="text"
-              value=""
-              onChange={() => {}}
-              onPaste={(e) => {
-                const url = e.clipboardData.getData("text");
-                setMapsUrl(url);
-                setTimeout(() => (e.target as HTMLInputElement).blur(), 0);
-              }}
-              onBlur={(e) => {
-                const url = (e.target as HTMLInputElement).value || mapsUrl;
-                if (!url) return;
-                setMapsUrl(url);
-                const fields: Partial<FishingZone> = { google_maps_url: url };
-                const m = url.match(/@(-?\d+\.?\d+),(-?\d+\.?\d+)/) ||
-                          url.match(/[?&]q=(-?\d+\.?\d+),(-?\d+\.?\d+)/);
-                if (m) {
-                  fields.lat = parseFloat(m[1]);
-                  fields.lng = parseFloat(m[2]);
-                }
-                save(fields);
-              }}
-              placeholder="Coller un lien Google Maps"
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-lg text-white placeholder:text-white/40 focus:outline-none focus:border-amber-500/50 transition-colors min-h-[48px]"
-            />
           )}
         </div>
       </div>

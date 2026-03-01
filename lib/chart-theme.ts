@@ -1,6 +1,6 @@
 /** Shared Recharts dark theme constants */
 
-export const TICK_STYLE = { fontSize: 10, fill: "rgba(255,255,255,0.5)" };
+export const TICK_STYLE = { fontSize: 14, fill: "rgba(255,255,255,0.5)" };
 
 export const AXIS_LINE = { stroke: "rgba(255,255,255,0.1)" };
 
@@ -12,7 +12,7 @@ export const TOOLTIP_STYLE = {
   WebkitBackdropFilter: "blur(12px)",
   border: "1px solid rgba(255, 255, 255, 0.1)",
   borderRadius: "12px",
-  fontSize: "13px",
+  fontSize: "16px",
   color: "#F1F5F9",
   boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
 };

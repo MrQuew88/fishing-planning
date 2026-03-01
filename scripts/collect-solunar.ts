@@ -105,7 +105,7 @@ function buildRow(date: string, data: SolunarResponse) {
     minor_2_start: to24h(data.minor2Start),
     minor_2_end: to24h(data.minor2Stop),
     moon_phase: data.moonPhase ?? null,
-    moon_illumination: data.moonIllumination ?? null,
+    moon_illumination: data.moonIllumination != null ? Math.round(data.moonIllumination * 100) : null,
   };
 }
 
