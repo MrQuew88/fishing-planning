@@ -821,6 +821,83 @@
           "notes": "Une structure pélagique exceptionnelle pour les gros poissons post-fraie. Les prédateurs utilisent la fosse de 4.5m pour se reposer et montent chasser sur le dôme à 1.5m. Pêcher au gros leurre souple (swimbait) en le faisant dévaler la cassure ou en le ramenant juste au-dessus du haut-fond pour déclencher des attaques violentes."
         }
       ]
+    },
+    {
+      "zone_name": "Town Lough",
+      "features": [
+        {
+          "name": "Fosse centrale — Cuvette Est",
+          "lat": 54.0198,
+          "lng": -7.5296,
+          "radius_m": 120,
+          "depth_min": 3.5,
+          "depth_max": 8.5,
+          "type": "deep_hole",
+          "profile": "Dépression principale du lac atteignant 8.5m concentrée dans la partie centre-est. Le fond descend progressivement depuis l'ouest (transition de 3.5m vers 8.5m) mais présente un tombant beaucoup plus raide côté est.",
+          "orientation": "centre du bassin",
+          "wind_sheltered": [],
+          "wind_exposed": ["N", "S", "E", "W"],
+          "post_spawn_score": 3,
+          "vegetation": null,
+          "is_spawning_zone": null,
+          "spawning_notes": null,
+          "notes": "Avec une profondeur réelle de 8.5m, c'est une zone de repos classique et très accessible pour les brochets en post-fraie. En cas de coup de froid, prospecter le fond en verticale ou au leurre souple lourd. Par temps clair, chercher les poissons suspendus à mi-profondeur (4-5m) au-dessus de la fosse."
+        },
+        {
+          "name": "Plateau chaotique — Lobe Ouest",
+          "lat": 54.0185,
+          "lng": -7.5340,
+          "radius_m": 250,
+          "depth_min": 1.0,
+          "depth_max": 4.5,
+          "type": "irregular_shelf",
+          "profile": "La vaste moitié ouest est un plateau extrêmement accidenté. La profondeur moyenne navigue entre 3m et 4.5m, mais de multiples dômes sous-marins remontent brusquement entre 1m et 2m de la surface.",
+          "orientation": "face E",
+          "wind_sheltered": ["W", "SW", "NW"],
+          "wind_exposed": ["E", "NE", "SE"],
+          "post_spawn_score": 5,
+          "vegetation": null,
+          "is_spawning_zone": null,
+          "spawning_notes": null,
+          "notes": "Le terrain de chasse absolu de ce lac. Les brochets patrouillent d'un dôme à l'autre pour surprendre le fourrage. À prospecter activement (power fishing) avec des swimbaits, jerkbaits ou spinnerbaits en peignant méthodiquement le dessus des hauts-fonds (1-2m) et leurs tombants immédiats (3-4m)."
+        },
+        {
+          "name": "Tombant net — Rive Est (Route R201)",
+          "lat": 54.0190,
+          "lng": -7.5265,
+          "radius_m": 150,
+          "depth_min": 0.5,
+          "depth_max": 7.5,
+          "type": "drop_off",
+          "profile": "Cassure très franche et régulière longeant la rive est, parallèle à la route. L'eau passe d'une fine bordure de 0.5m à plus de 7.5m sur une très courte distance, plongeant directement dans la fosse centrale.",
+          "orientation": "face W",
+          "wind_sheltered": ["E", "NE", "SE"],
+          "wind_exposed": ["W", "SW", "NW"],
+          "post_spawn_score": 4,
+          "vegetation": "Berge avec lisières d'arbres éparses",
+          "is_spawning_zone": null,
+          "spawning_notes": null,
+          "notes": "Une excellente ligne de patrouille matinale ou du coup du soir. Les brochets aiment longer ce 'mur' pour acculer les proies vers la rive. Pêcher en diagonale ou parallèlement à la rive en laissant descendre des leurres souples à palette (shad à palette) le long de la pente."
+        },
+        {
+          "name": "Baie shallow — Enfoncement Nord",
+          "lat": 54.0220,
+          "lng": -7.5270,
+          "radius_m": 100,
+          "depth_min": 0.5,
+          "depth_max": 1.7,
+          "type": "arm_bay",
+          "profile": "Renfoncement vers le nord offrant la seule vraie pente douce du bassin. De larges marges stagnent autour de 0.5m à 1.5m avant de rejoindre progressivement le centre. Vue satellite montrant des rives agricoles.",
+          "orientation": "face S",
+          "wind_sheltered": ["N", "NE", "NW"],
+          "wind_exposed": ["S", "SW", "SE"],
+          "post_spawn_score": 5,
+          "vegetation": "Développement probable d'herbiers sur ces vastes fonds de moins de 1.5m",
+          "is_spawning_zone": true,
+          "spawning_notes": "Bien exposée au soleil du sud et protégée du nord, cette baie aux faibles profondeurs (0.5 - 1.5m) est la zone de fraie principale la plus évidente du plan d'eau.",
+          "notes": "Point de départ idéal le matin si l'eau s'est réchauffée. Les poissons actifs (ou en sortie de fraie) s'y concentreront pour se nourrir dans peu d'eau. Pêcher léger : jerkbaits suspending (marquer de longues pauses), petits swimbaits non plombés ou chatterbaits au-dessus de la végétation naissante."
+        }
+      ]
     }
   ]
 }
