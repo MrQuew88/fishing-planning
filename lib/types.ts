@@ -68,6 +68,25 @@ export interface TacticalBriefing {
   created_at: string;
 }
 
+export interface BriefingContent {
+  date: string;
+  weather_summary: { icon: string; text: string }[];
+  general_conditions: string;
+  zones: {
+    zone_id: string;
+    zone_name: string;
+    post_spawn_score: number;
+    why_today: string;
+    target_depths: string;
+    google_maps_url: string | null;
+  }[];
+  timing: {
+    solunar_major: string[];
+    solunar_minor: string[];
+    periods: { label: string; conditions: string; zones: string[] }[];
+  };
+}
+
 export interface FishingZone {
   id: string;
   zone_name: string;
