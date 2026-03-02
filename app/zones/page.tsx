@@ -26,7 +26,7 @@ export default async function ZonesPage() {
     <div className="pt-6 space-y-6">
       <div>
         <SectionTitle>Zones de pêche</SectionTitle>
-        <p className="text-lg text-white/75 mt-1">
+        <p className="text-sm md:text-lg text-white/75 mt-1">
           Analyse bathymétrique post-fraie — Killykeen / Lough Oughter
         </p>
       </div>

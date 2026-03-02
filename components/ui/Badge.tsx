@@ -20,7 +20,7 @@ export default function Badge({ label, color = "neutral" }: Props) {
   const classes = COLOR_MAP[color] || color;
   return (
     <span
-      className={`rounded-full px-3 py-1 text-base font-semibold ${classes}`}
+      className={`rounded-full px-2.5 py-0.5 md:px-3 md:py-1 text-sm md:text-base font-semibold ${classes}`}
     >
       {label}
     </span>

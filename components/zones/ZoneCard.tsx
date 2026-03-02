@@ -49,24 +49,24 @@ export default function ZoneCard({ zone }: Props) {
   };
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative">
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 md:p-6 relative">
       {saving && (
-        <div className="absolute top-4 right-4 text-base text-amber-400/70 animate-pulse">
+        <div className="absolute top-4 right-4 text-sm md:text-base text-amber-400/70 animate-pulse">
           Saving…
         </div>
       )}
 
       {/* Header */}
-      <div className="flex flex-wrap items-start gap-3 mb-4">
-        <h3 className="text-xl font-bold flex-1 min-w-0">{zone.name}</h3>
+      <div className="flex flex-wrap items-start gap-2 md:gap-3 mb-4">
+        <h3 className="text-base md:text-xl font-bold w-full md:w-auto md:flex-1 md:min-w-0">{zone.name}</h3>
         <Badge label={typeInfo.label} color={typeInfo.color} />
-        <span className="text-[#F59E0B] font-[family-name:var(--font-space)] text-lg tracking-wide whitespace-nowrap">
+        <span className="text-[#F59E0B] font-[family-name:var(--font-space)] text-sm md:text-lg tracking-wide whitespace-nowrap">
           {SCORE_STARS(zone.post_spawn_score)}
         </span>
       </div>
 
       {/* Depth & Orientation */}
-      <div className="flex flex-wrap gap-x-6 gap-y-1 text-lg mb-4">
+      <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm md:text-lg mb-4">
         <span className="text-white/75 font-medium">
           Profondeur{" "}
           <span className="font-[family-name:var(--font-space)] font-bold text-white">
@@ -83,7 +83,7 @@ export default function ZoneCard({ zone }: Props) {
 
       {/* Wind */}
       {(zone.wind_sheltered.length > 0 || zone.wind_exposed.length > 0) && (
-        <div className="flex flex-wrap gap-x-6 gap-y-1 text-lg mb-4">
+        <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm md:text-lg mb-4">
           {zone.wind_sheltered.length > 0 && (
             <span className="text-white/70 font-medium">
               Abrité{" "}
@@ -104,13 +104,13 @@ export default function ZoneCard({ zone }: Props) {
       )}
 
       {/* Profile */}
-      <p className="text-white/80 text-lg leading-relaxed mb-4">
+      <p className="text-white/80 text-sm md:text-lg leading-relaxed mb-4">
         {zone.profile}
       </p>
 
       {/* Tactical notes */}
       {zone.notes && (
-        <p className="text-white/70 text-lg italic leading-relaxed mb-4">
+        <p className="text-white/70 text-sm md:text-lg italic leading-relaxed mb-4">
           {zone.notes}
         </p>
       )}
@@ -118,21 +118,21 @@ export default function ZoneCard({ zone }: Props) {
       {/* Editable fields */}
       <div className="border-t border-white/[0.06] pt-4 mt-2 space-y-4">
         {/* Vegetation */}
-        <div className="flex items-center gap-3">
-          <label className="text-lg text-white/70 font-medium w-28 shrink-0">Végétation</label>
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
+          <label className="text-sm md:text-lg text-white/70 font-medium md:w-28 shrink-0">Végétation</label>
           <input
             type="text"
             value={vegetation}
             onChange={(e) => setVegetation(e.target.value)}
             onBlur={() => save({ vegetation: vegetation || null })}
             placeholder="Non renseigné"
-            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-lg text-white placeholder:text-white/40 focus:outline-none focus:border-amber-500/50 transition-colors min-h-[48px]"
+            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm md:text-lg text-white placeholder:text-white/40 focus:outline-none focus:border-amber-500/50 transition-colors min-h-[48px]"
           />
         </div>
 
         {/* Spawning zone toggle */}
-        <div className="flex items-center gap-3">
-          <label className="text-lg text-white/70 font-medium w-28 shrink-0">Zone de fraie</label>
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
+          <label className="text-sm md:text-lg text-white/70 font-medium md:w-28 shrink-0">Zone de fraie</label>
           <button
             role="switch"
             aria-checked={isSpawning}
@@ -154,8 +154,8 @@ export default function ZoneCard({ zone }: Props) {
         </div>
 
         {/* Google Maps link */}
-        <div className="flex items-center gap-3">
-          <label className="text-lg text-white/70 font-medium w-28 shrink-0">Google Maps</label>
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
+          <label className="text-sm md:text-lg text-white/70 font-medium md:w-28 shrink-0">Google Maps</label>
           {editingMaps ? (
             <div className="flex flex-col md:flex-row gap-2 flex-1 min-w-0">
               <input
@@ -163,7 +163,7 @@ export default function ZoneCard({ zone }: Props) {
                 value={mapsInput}
                 onChange={(e) => setMapsInput(e.target.value)}
                 placeholder="Coller un lien Google Maps"
-                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-lg text-white placeholder:text-white/40 focus:outline-none focus:border-amber-500/50 transition-colors min-h-[48px]"
+                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm md:text-lg text-white placeholder:text-white/40 focus:outline-none focus:border-amber-500/50 transition-colors min-h-[48px]"
               />
               <button
                 onClick={() => {
@@ -181,7 +181,7 @@ export default function ZoneCard({ zone }: Props) {
                   save(fields);
                   setMapsInput("");
                 }}
-                className="bg-amber-500/20 text-amber-500 font-semibold rounded-xl px-5 py-3 text-lg min-h-[48px] shrink-0 transition-colors hover:bg-amber-500/30"
+                className="bg-amber-500/20 text-amber-500 font-semibold rounded-xl px-5 py-3 text-sm md:text-lg min-h-[48px] shrink-0 transition-colors hover:bg-amber-500/30"
               >
                 Valider
               </button>
@@ -192,7 +192,7 @@ export default function ZoneCard({ zone }: Props) {
                 href={mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-lg text-[#F59E0B]/80 hover:text-[#F59E0B] transition-colors truncate"
+                className="text-sm md:text-lg text-[#F59E0B]/80 hover:text-[#F59E0B] transition-colors truncate"
               >
                 📍 Voir sur Google Maps
               </a>

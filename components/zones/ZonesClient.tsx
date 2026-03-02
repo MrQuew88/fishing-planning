@@ -25,9 +25,9 @@ function ZoneSection({
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-3 w-full text-left py-2 group"
       >
-        <h2 className="text-xl font-bold uppercase tracking-wide text-[#F1F5F9]">
+        <h2 className="text-base md:text-xl font-bold uppercase tracking-wide text-[#F1F5F9]">
           {zoneName}
-          <span className="text-white/70 font-semibold ml-2">({features.length})</span>
+          <span className="text-white/70 font-semibold ml-2 text-sm md:text-base">({features.length})</span>
         </h2>
         <svg
           className={`w-5 h-5 text-white/70 transition-transform duration-200 shrink-0 ${
