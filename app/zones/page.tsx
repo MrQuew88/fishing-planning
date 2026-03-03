@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { FishingZone } from "@/lib/types";
 import ZonesClient from "@/components/zones/ZonesClient";
@@ -30,6 +31,12 @@ export default async function ZonesPage() {
           Analyse bathymétrique post-fraie — Killykeen / Lough Oughter
         </p>
       </div>
+      <Link
+        href="/zones/carte"
+        className="inline-flex items-center gap-2 bg-white/10 border border-white/10 rounded-xl px-5 py-3 text-lg font-semibold text-white hover:bg-white/15 transition-colors"
+      >
+        🗺 Voir sur la carte
+      </Link>
       <ZonesClient zones={zones} />
     </div>
   );

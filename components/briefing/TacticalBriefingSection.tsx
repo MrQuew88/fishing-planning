@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { BriefingContent, FishingZone } from "@/lib/types";
 import GlassCard from "@/components/ui/GlassCard";
 import SectionTitle from "@/components/ui/SectionTitle";
@@ -233,6 +234,12 @@ export default function TacticalBriefingSection({ content, zonesMap }: Props) {
       {content.zones.length > 0 && (
         <div>
           <SectionTitle>Zones recommandées</SectionTitle>
+          <Link
+            href="/briefing/carte"
+            className="inline-flex items-center gap-2 bg-white/10 border border-white/10 rounded-xl px-5 py-3 text-lg font-semibold text-white hover:bg-white/15 transition-colors mt-4"
+          >
+            🗺 Voir sur la carte
+          </Link>
           <div className="grid gap-3 mt-4">
             {content.zones.map((zone, i) => (
               <BriefingZoneCard

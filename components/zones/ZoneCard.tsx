@@ -173,7 +173,8 @@ export default function ZoneCard({ zone }: Props) {
                   setEditingMaps(false);
                   const fields: Partial<FishingZone> = { google_maps_url: url };
                   const m = url.match(/@(-?\d+\.?\d+),(-?\d+\.?\d+)/) ||
-                            url.match(/[?&]q=(-?\d+\.?\d+),(-?\d+\.?\d+)/);
+                            url.match(/[?&]q=(-?\d+\.?\d+),(-?\d+\.?\d+)/) ||
+                            url.match(/\/search\/(-?\d+\.?\d+),\+(-?\d+\.?\d+)/);
                   if (m) {
                     fields.lat = parseFloat(m[1]);
                     fields.lng = parseFloat(m[2]);
