@@ -125,7 +125,7 @@ export default async function BriefingPage() {
           const parsed = JSON.parse(briefing.content) as BriefingContent;
           const zonesMap: Record<string, FishingZone> = {};
           for (const z of fishingZones) zonesMap[z.id] = z;
-          return <TacticalBriefingSection content={parsed} zonesMap={zonesMap} />;
+          return <TacticalBriefingSection content={parsed} zonesMap={zonesMap} date={todayStr} />;
         })()
       ) : (
         <GlassCard>

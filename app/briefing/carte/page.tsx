@@ -4,18 +4,14 @@ import BriefingMap from "@/components/briefing/BriefingMapLoader";
 
 export const dynamic = "force-dynamic";
 
-async function getTodayBriefing(): Promise<TacticalBriefing | null> {
+async function getBriefing(date: string): Promise<TacticalBriefing | null> {
   if (!supabase) return null;
-  const today = new Date().toISOString().slice(0, 10);
   const { data, error } = await supabase
     .from("tactical_briefings")
     .select("*")
-    .eq("date", today)
+    .eq("date", date)
     .single();
-  if (error) {
-    console.error("Failed to fetch briefing:", error);
-    return null;
-  }
+  if (error) return null;
   return data as TacticalBriefing;
 }
 
@@ -29,9 +25,16 @@ async function getFishingZones(): Promise<FishingZone[]> {
   return data as FishingZone[];
 }
 
-export default async function BriefingCartePage() {
+export default async function BriefingCartePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { date } = await searchParams;
+  const targetDate = date || new Date().toISOString().slice(0, 10);
+
   const [briefing, allZones] = await Promise.all([
-    getTodayBriefing(),
+    getBriefing(targetDate),
     getFishingZones(),
   ]);
 

@@ -141,9 +141,10 @@ function BriefingZoneCard({
 interface Props {
   content: BriefingContent;
   zonesMap: Record<string, FishingZone>;
+  date?: string;
 }
 
-export default function TacticalBriefingSection({ content, zonesMap }: Props) {
+export default function TacticalBriefingSection({ content, zonesMap, date }: Props) {
   // Build lookup: fishing_zones.name → zone_id (from briefing zones)
   const nameToZoneId: Record<string, string> = {};
   for (const z of content.zones) {
@@ -235,7 +236,7 @@ export default function TacticalBriefingSection({ content, zonesMap }: Props) {
         <div>
           <SectionTitle>Zones recommandées</SectionTitle>
           <Link
-            href="/briefing/carte"
+            href={date ? `/briefing/carte?date=${date}` : "/briefing/carte"}
             className="inline-flex items-center gap-2 bg-white/10 border border-white/10 rounded-xl px-5 py-3 text-lg font-semibold text-white hover:bg-white/15 transition-colors mt-4"
           >
             🗺 Voir sur la carte

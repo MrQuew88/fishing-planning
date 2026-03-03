@@ -53,7 +53,7 @@ export default function TomorrowBriefingCollapsible({
       <div className="collapse-content" data-open={open}>
         <div className="collapse-inner">
           <div className="pt-6">
-            <TacticalBriefingSection content={content} zonesMap={zonesMap} />
+            <TacticalBriefingSection content={content} zonesMap={zonesMap} date={date} />
           </div>
         </div>
       </div>
