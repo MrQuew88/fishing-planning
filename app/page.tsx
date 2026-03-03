@@ -3,6 +3,7 @@ import { HourlyForecast, Solunar, TacticalBriefing, BriefingContent, FishingZone
 import TodayHours from "@/components/briefing/TodayHours";
 import SolunarSection from "@/components/briefing/SolunarBar";
 import TacticalBriefingSection from "@/components/briefing/TacticalBriefingSection";
+import TomorrowBriefingCollapsible from "@/components/briefing/TomorrowBriefingCollapsible";
 import GlassCard from "@/components/ui/GlassCard";
 import SectionTitle from "@/components/ui/SectionTitle";
 
@@ -37,18 +38,14 @@ async function getSolunarData(): Promise<Solunar[]> {
   return data as Solunar[];
 }
 
-async function getTodayBriefing(): Promise<TacticalBriefing | null> {
+async function getBriefing(date: string): Promise<TacticalBriefing | null> {
   if (!supabase) return null;
-  const today = new Date().toISOString().slice(0, 10);
   const { data, error } = await supabase
     .from("tactical_briefings")
     .select("*")
-    .eq("date", today)
+    .eq("date", date)
     .single();
-  if (error) {
-    console.error("Failed to fetch briefing:", error);
-    return null;
-  }
+  if (error) return null;
   return data as TacticalBriefing;
 }
 
@@ -79,15 +76,20 @@ function trimSeconds(time: string | null): string {
 }
 
 export default async function BriefingPage() {
-  const [forecast, solunar, briefing, fishingZones] = await Promise.all([
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+
+  const [forecast, solunar, briefing, tomorrowBriefing, fishingZones] = await Promise.all([
     getForecastData(),
     getSolunarData(),
-    getTodayBriefing(),
+    getBriefing(todayStr),
+    getBriefing(tomorrowStr),
     getFishingZones(),
   ]);
 
   const todayHours = getTodayHours(forecast);
-  const todayStr = new Date().toISOString().slice(0, 10);
   const solunarMap = new Map(solunar.map((s) => [s.date, s]));
   const todaySolunar = solunarMap.get(todayStr);
 
@@ -117,7 +119,7 @@ export default async function BriefingPage() {
       {/* Solunar structured section */}
       {todaySolunar && <SolunarSection solunar={todaySolunar} />}
 
-      {/* Tactical briefing */}
+      {/* Tactical briefing — today */}
       {briefing ? (
         (() => {
           const parsed = JSON.parse(briefing.content) as BriefingContent;
@@ -133,6 +135,20 @@ export default async function BriefingPage() {
           </p>
         </GlassCard>
       )}
+
+      {/* Tactical briefing — tomorrow (collapsible) */}
+      {tomorrowBriefing && (() => {
+        const parsed = JSON.parse(tomorrowBriefing.content) as BriefingContent;
+        const zonesMap: Record<string, FishingZone> = {};
+        for (const z of fishingZones) zonesMap[z.id] = z;
+        return (
+          <TomorrowBriefingCollapsible
+            date={tomorrowStr}
+            content={parsed}
+            zonesMap={zonesMap}
+          />
+        );
+      })()}
     </div>
   );
 }
