@@ -55,7 +55,7 @@ export default async function ConditionsPage() {
   ]);
 
   return (
-    <div className="pt-6">
+    <div className="stagger-in pt-6">
       <ConditionsTabs
         weatherData={weatherData}
         forecast={forecast}

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { HourlyForecast } from "@/lib/types";
 
-const D = "font-[family-name:var(--font-space)]";
+const D = "font-[family-name:var(--font-plex)]";
 
 function pressureTrend(current: number | null, prev: number | null): string {
   if (current == null || prev == null) return "";
@@ -45,7 +45,7 @@ function HourSlot({
   return (
     <div
       data-hour={parseInt(hour.datetime.slice(11, 13), 10)}
-      className={`hour-snap flex-shrink-0 w-[280px] py-4 px-4 rounded-xl transition-colors ${
+      className={`hour-snap flex-shrink-0 w-[180px] pt-3 pb-2 px-3 rounded-xl transition-colors flex flex-col ${
         isCurrent
           ? "bg-white/[0.08] border border-[#F59E0B]/30"
           : "bg-white/[0.03] border border-white/[0.06]"
@@ -73,15 +73,17 @@ function HourSlot({
         </div>
       </div>
 
-      {/* Pluie — wording actionnable */}
-      {rain && (
-        <div className={`mb-2 ${rain.classes}`}>
-          {rain.text}
-        </div>
-      )}
+      {/* Pluie — wording actionnable (flex-1 pushes pressure to bottom) */}
+      <div className="flex-1">
+        {rain && (
+          <div className={`${rain.classes}`}>
+            {rain.text}
+          </div>
+        )}
+      </div>
 
-      {/* Pression */}
-      <div className="flex items-baseline gap-1">
+      {/* Pression — always at bottom */}
+      <div className="flex items-baseline gap-1 mt-2">
         <span className={`${D} text-base text-white/70 font-medium`}>
           {hour.pression_hpa != null ? Math.round(hour.pression_hpa) : "\u2013"}
         </span>
@@ -108,7 +110,7 @@ export default function TodayHours({ hours }: { hours: HourlyForecast[] }) {
   if (hours.length === 0) return null;
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 overflow-hidden">
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-3 overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
       <div ref={scrollRef} className="hour-scroll flex gap-2">
         {hours.map((h, i) => {
           const hHour = parseInt(h.datetime.slice(11, 13), 10);

@@ -18,6 +18,13 @@ const TYPE_LABELS: Record<string, { label: string; color: string }> = {
 const SCORE_STARS = (score: number) =>
   "★".repeat(score) + "☆".repeat(5 - score);
 
+function getScoreBorderColor(score: number): string {
+  if (score >= 5) return "border-l-[#F59E0B]";
+  if (score >= 4) return "border-l-[#22C55E]";
+  if (score >= 3) return "border-l-[#3B82F6]";
+  return "border-l-[#EF4444]";
+}
+
 interface Props {
   zone: FishingZone;
 }
@@ -49,7 +56,7 @@ export default function ZoneCard({ zone }: Props) {
   };
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 md:p-6 relative">
+    <div className={`bg-white/5 backdrop-blur-xl border border-white/10 border-l-2 ${getScoreBorderColor(zone.post_spawn_score)} rounded-2xl p-4 md:p-6 relative shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]`}>
       {saving && (
         <div className="absolute top-4 right-4 text-sm md:text-base text-amber-400/70 animate-pulse">
           Saving…
@@ -60,7 +67,7 @@ export default function ZoneCard({ zone }: Props) {
       <div className="flex flex-wrap items-start gap-2 md:gap-3 mb-4">
         <h3 className="text-base md:text-xl font-bold w-full md:w-auto md:flex-1 md:min-w-0">{zone.name}</h3>
         <Badge label={typeInfo.label} color={typeInfo.color} />
-        <span className="text-[#F59E0B] font-[family-name:var(--font-space)] text-sm md:text-lg tracking-wide whitespace-nowrap">
+        <span className="text-[#F59E0B] font-[family-name:var(--font-plex)] text-sm md:text-lg tracking-wide whitespace-nowrap">
           {SCORE_STARS(zone.post_spawn_score)}
         </span>
       </div>
@@ -69,7 +76,7 @@ export default function ZoneCard({ zone }: Props) {
       <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm md:text-lg mb-4">
         <span className="text-white/75 font-medium">
           Profondeur{" "}
-          <span className="font-[family-name:var(--font-space)] font-bold text-white">
+          <span className="font-[family-name:var(--font-plex)] font-bold text-white">
             {zone.depth_min} – {zone.depth_max}m
           </span>
         </span>

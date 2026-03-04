@@ -8,7 +8,6 @@ const links = [
   { href: "/", label: "Briefing" },
   { href: "/conditions", label: "Conditions" },
   { href: "/zones", label: "Zones" },
-  { href: "/arsenal", label: "Arsenal" },
 ];
 
 export default function Navigation() {
@@ -22,22 +21,22 @@ export default function Navigation() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-[#0B1426]/90 backdrop-blur-xl border-b border-white/[0.06] py-2">
+      <nav className="sticky top-0 z-50 bg-[#080F1E]/90 backdrop-blur-xl border-b border-white/[0.06] py-2">
         <div className="main-container mx-auto px-4 md:px-8 flex items-center justify-between min-h-[48px]">
           <Link href="/" className="font-bold text-white text-xl tracking-tight">
             Killykeen
           </Link>
 
-          {/* Desktop pills */}
+          {/* Desktop links — underline indicator */}
           <div className="hidden md:flex gap-2">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-6 py-3 rounded-full text-lg font-medium transition-colors min-h-[48px] flex items-center ${
+                className={`px-6 py-3 text-lg font-medium transition-colors min-h-[48px] flex items-center border-b-2 ${
                   isActive(link.href)
-                    ? "bg-white/15 text-white"
-                    : "text-white/70 hover:text-white/80"
+                    ? "border-[#F59E0B] text-white"
+                    : "border-transparent text-white/70 hover:text-white/80"
                 }`}
               >
                 {link.label}
@@ -73,7 +72,7 @@ export default function Navigation() {
           <div className="absolute inset-0 bg-black/40 animate-fade-in" />
 
           <div
-            className="absolute top-0 right-0 h-full w-72 bg-[#0B1426]/95 backdrop-blur-2xl border-l border-white/[0.06] animate-slide-in"
+            className="absolute top-0 right-0 h-full w-72 bg-[#080F1E]/95 backdrop-blur-2xl border-l border-white/[0.06] animate-slide-in"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-5 min-h-[64px] border-b border-white/[0.06]">

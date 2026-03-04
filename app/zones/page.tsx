@@ -24,7 +24,7 @@ export default async function ZonesPage() {
   const zones = await getZones();
 
   return (
-    <div className="pt-6 space-y-6">
+    <div className="stagger-in pt-6 space-y-6">
       <div>
         <SectionTitle>Zones de pêche</SectionTitle>
         <p className="text-sm md:text-lg text-white/75 mt-1">

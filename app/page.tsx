@@ -94,18 +94,18 @@ export default async function BriefingPage() {
   const todaySolunar = solunarMap.get(todayStr);
 
   return (
-    <div className="space-y-8 pt-6">
+    <div className="stagger-in space-y-8 pt-6">
       {/* Header with sunrise/sunset */}
       <div className="flex items-center justify-between">
         <SectionTitle>Aujourd&apos;hui heure par heure</SectionTitle>
         {todaySolunar && (
           <span className="text-lg text-white/75 font-medium">
             {"\u2600\uFE0F"}{" "}
-            <span className="font-[family-name:var(--font-space)] font-bold text-white">
+            <span className="font-[family-name:var(--font-plex)] font-bold text-white">
               {trimSeconds(todaySolunar.lever_soleil)}
             </span>
             {" \u2014 "}
-            <span className="font-[family-name:var(--font-space)] font-bold text-white">
+            <span className="font-[family-name:var(--font-plex)] font-bold text-white">
               {trimSeconds(todaySolunar.coucher_soleil)}
             </span>
             {" \uD83C\uDF19"}

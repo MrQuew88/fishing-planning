@@ -2,7 +2,7 @@
 
 import { Solunar } from "@/lib/types";
 
-const D = "font-[family-name:var(--font-space)]";
+const D = "font-[family-name:var(--font-plex)]";
 
 function trimSeconds(time: string | null): string {
   if (!time) return "\u2013";
@@ -11,7 +11,7 @@ function trimSeconds(time: string | null): string {
 
 export default function SunriseSunset({ solunar }: { solunar: Solunar }) {
   return (
-    <div className="bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-2xl px-5 py-4 flex items-center justify-between">
+    <div className="bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-2xl px-5 py-4 flex items-center justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
       <div className="flex items-center gap-3">
         <span className="text-[#F59E0B] text-xl">{"\u2600\uFE0F"}</span>
         <div>

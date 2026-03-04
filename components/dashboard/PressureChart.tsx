@@ -26,7 +26,7 @@ export default function PressureChart({ data }: { data: DailyWeather[] }) {
   });
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
       <h3 className="text-xl font-bold text-[#F1F5F9] uppercase tracking-wide mb-4">
         Pression barométrique (hPa)
       </h3>

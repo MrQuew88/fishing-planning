@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { HourlyForecast, Solunar } from "@/lib/types";
 
-const D = "font-[family-name:var(--font-space)]";
+const D = "font-[family-name:var(--font-plex)]";
 
 interface ForecastWeekProps {
   forecast: HourlyForecast[];
@@ -122,7 +122,7 @@ function DaySummaryCard({
   }
 
   return (
-    <div className="bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-2xl overflow-hidden">
+    <div className="bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-2xl overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
       <button
         onClick={() => setOpen(!open)}
         className="w-full px-6 py-5 active:bg-white/[0.02] transition-colors text-left"
@@ -133,7 +133,7 @@ function DaySummaryCard({
               {formatDayHeader(date)}
             </span>
             {badge.label && (
-              <span className={`text-base font-semibold px-3 py-1 rounded-full ${badge.classes}`}>
+              <span className={`text-base font-semibold px-3 py-1 rounded-md ${badge.classes}`}>
                 {badge.label}
               </span>
             )}

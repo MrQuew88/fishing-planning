@@ -2,7 +2,7 @@
 
 import { Solunar } from "@/lib/types";
 
-const D = "font-[family-name:var(--font-space)]";
+const D = "font-[family-name:var(--font-plex)]";
 
 function trimSeconds(time: string): string {
   return time.slice(0, 5);
@@ -32,7 +32,7 @@ export default function SolunarSection({ solunar }: { solunar: Solunar }) {
   const minors = periods.filter((p) => p.type === "minor");
 
   return (
-    <div className="bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-2xl px-6 py-6 space-y-5">
+    <div className="bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-2xl px-6 py-6 space-y-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
       {majors.length > 0 && (
         <div>
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">

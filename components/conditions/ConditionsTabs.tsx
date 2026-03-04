@@ -31,7 +31,7 @@ export default function ConditionsTabs({
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-6 py-3 rounded-full text-base font-bold uppercase tracking-wide transition-colors min-h-[48px] ${
+            className={`px-6 py-3 rounded-xl text-base font-bold uppercase tracking-wide transition-colors min-h-[48px] ${
               tab === t.key
                 ? "bg-white/10 text-white"
                 : "text-white/70 hover:text-white/70"

@@ -2,7 +2,7 @@
 
 import { DailyWeather } from "@/lib/types";
 
-const D = "font-[family-name:var(--font-space)]";
+const D = "font-[family-name:var(--font-plex)]";
 
 const columns: { key: keyof DailyWeather; label: string }[] = [
   { key: "date", label: "Date" },
@@ -31,7 +31,7 @@ export default function WeatherTable({ data }: { data: DailyWeather[] }) {
   }
 
   return (
-    <div className="overflow-x-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl">
+    <div className="overflow-x-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
       <table className="w-full text-base">
         <thead>
           <tr className="border-b border-white/[0.06]">

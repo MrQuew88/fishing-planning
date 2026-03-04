@@ -22,7 +22,7 @@ function BriefingZoneCard({
   return (
     <div
       id={`briefing-zone-${briefingZone.zone_id}`}
-      className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl scroll-mt-24"
+      className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl scroll-mt-24 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
     >
       {/* Persistent section — always visible */}
       <div className="p-4 md:p-5">
@@ -32,7 +32,7 @@ function BriefingZoneCard({
               <span className="text-base md:text-lg font-bold text-white">
                 {briefingZone.zone_name}
               </span>
-              <span className="text-amber-400 text-sm md:text-base font-[family-name:var(--font-space)]">
+              <span className="text-amber-400 text-sm md:text-base font-[family-name:var(--font-plex)]">
                 {SCORE_STARS(briefingZone.post_spawn_score)}
               </span>
             </div>
@@ -91,7 +91,7 @@ function BriefingZoneCard({
                 <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm md:text-base">
                   <span className="text-white/50">
                     Prof.{" "}
-                    <span className="text-white/70 font-[family-name:var(--font-space)]">
+                    <span className="text-white/70 font-[family-name:var(--font-plex)]">
                       {zoneDetail.depth_min}–{zoneDetail.depth_max}m
                     </span>
                   </span>
@@ -167,7 +167,7 @@ export default function TacticalBriefingSection({ content, zonesMap, date }: Pro
         {/* Weather summary as bullet points */}
         <ul className="mt-3 space-y-1.5">
           {content.weather_summary.map((item, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm md:text-base text-white/60 font-[family-name:var(--font-space)]">
+            <li key={i} className="flex items-start gap-2 text-sm md:text-base text-white/60 font-[family-name:var(--font-plex)]">
               <span className="flex-shrink-0">{item.icon}</span>
               <span>{item.text}</span>
             </li>

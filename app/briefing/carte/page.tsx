@@ -40,7 +40,7 @@ export default async function BriefingCartePage({
 
   if (!briefing) {
     return (
-      <div className="fixed top-[52px] left-0 right-0 bottom-0 flex items-center justify-center bg-[#0B1426]">
+      <div className="fixed top-[52px] left-0 right-0 bottom-0 flex items-center justify-center bg-[#080F1E]">
         <div className="text-center space-y-3 px-6">
           <p className="text-white/50 text-lg">
             Aucun briefing disponible pour aujourd&apos;hui.
