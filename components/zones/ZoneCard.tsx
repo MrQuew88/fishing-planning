@@ -9,7 +9,7 @@ const TYPE_LABELS: Record<string, { label: string; color: string }> = {
   drop_off: { label: "Drop-off", color: "blue" },
   deep_hole: { label: "Fosse", color: "purple" },
   irregular_shelf: { label: "Shelf irrégulier", color: "teal" },
-  narrows: { label: "Narrows", color: "orange" },
+  narrows: { label: "Goulet", color: "orange" },
   point_drop_off: { label: "Pointe", color: "bg-red-500/20 text-red-300" },
   arm_bay: { label: "Bras / Baie", color: "cyan" },
   plateau: { label: "Plateau", color: "emerald" },

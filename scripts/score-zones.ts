@@ -173,18 +173,18 @@ function scoreSlot(
 
   // Wind direction
   if (exposed) {
-    score += 2; // chop on exposed face = ideal for pike
+    score += 2; // clapots on exposed face = ideal for pike
   } else if (sheltered && windSpeed > 20) {
     score += 1; // sheltered from strong wind = fishable refuge
   } else if (sheltered) {
-    score += 0; // sheltered + moderate wind = too calm, no chop
+    score += 0; // sheltered + moderate wind = too calm, no clapots
   } else {
     score += 0.5; // neutral — not exposed, not sheltered
   }
 
   // Wind force modifier
   if (windSpeed >= 10 && windSpeed <= 25 && exposed) {
-    score += 1; // ideal chop on exposed
+    score += 1; // ideal clapots on exposed
   } else if (windSpeed > 25 && sheltered) {
     score += 1; // strong wind but sheltered = good refuge
   } else if (windSpeed < 10) {

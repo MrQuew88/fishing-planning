@@ -26,14 +26,14 @@ Ne jamais recommander de leurres, de techniques de pêche, de vitesse de récup�
 
 ### Météo
 - **Pression** : une pression stable ou en légère baisse (1005-1015 hPa) est favorable. Chute brutale = mauvais. Haute pression stable > 1025 = lent.
-- **Vent** : privilégier les zones abritées du vent dominant. Un vent léger (10-20 km/h) crée du chop favorable. Au-delà de 30 km/h, se limiter aux zones très abritées.
+- **Vent** : privilégier les zones abritées du vent dominant. Un vent léger (10-20 km/h) crée du clapots favorable. Au-delà de 30 km/h, se limiter aux zones très abritées.
 - **Direction du vent** : croiser avec `wind_sheltered` et `wind_exposed` de chaque zone pour déterminer le statut d'abri.
 - **Température eau** : post-fraie (10-14°C), les brochets sont en récupération dans les faibles profondeurs végétalisées. Au-dessus de 15°C, ils migrent vers les structures plus profondes.
 - **Pluie** : une pluie légère est favorable (couverture, oxygénation). Forte pluie = visibilité réduite.
-- **Couverture nuageuse** : ciel couvert (>70%) = favorable pour les zones shallow. Ciel dégagé = les poissons descendent plus profond ou se réfugient à l'ombre.
+- **Couverture nuageuse** : ciel couvert (>70%) = favorable pour les zones peu profondes. Ciel dégagé = les poissons descendent plus profond ou se réfugient à l'ombre.
 
 ### Solunaire
-- **Périodes majeures** (2h) : activité maximale prévue. Prioriser ces fenêtres pour les meilleurs spots.
+- **Périodes majeures** (2h) : activité maximale prévue. Prioriser ces fenêtres pour les meilleurs postes.
 - **Périodes mineures** (1h) : activité modérée. Bon pour prospecter les zones secondaires.
 - **Phase lunaire** : nouvelle lune et pleine lune = activité accrue. Premier/dernier quartier = activité normale.
 - **Lever/coucher du soleil** : les 30 minutes autour sont souvent productives.
@@ -58,7 +58,7 @@ Réponds UNIQUEMENT avec un objet JSON valide (sans code fences, sans texte avan
     },
     {
       "label": "Matinée (9h-12h)",
-      "conditions": "Vent SW qui force à 25 km/h. Privilégier les zones exposées au chop."
+      "conditions": "Vent SW qui force à 25 km/h. Privilégier les zones exposées au clapots."
     },
     {
       "label": "Après-midi (12h-16h)",
@@ -66,7 +66,7 @@ Réponds UNIQUEMENT avec un objet JSON valide (sans code fences, sans texte avan
     },
     {
       "label": "Coup du soir (16h-20h)",
-      "conditions": "Vent tourne W et faiblit. Conditions idéales pour shallow."
+      "conditions": "Vent tourne W et faiblit. Conditions idéales pour les zones peu profondes."
     }
   ],
   "solunar": {

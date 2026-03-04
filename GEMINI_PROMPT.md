@@ -82,7 +82,7 @@ Génère un JSON valide avec cette structure exacte. **Pas de markdown autour, j
 
 ### depth_min / depth_max
 - Profondeurs en mètres lues directement sur la carte bathymétrique
-- `depth_min` = le plus shallow, `depth_max` = le plus profond
+- `depth_min` = le moins profond, `depth_max` = le plus profond
 
 ### type
 - Un des 7 types listés ci-dessus, celui qui correspond le mieux
@@ -104,15 +104,15 @@ Génère un JSON valide avec cette structure exacte. **Pas de markdown autour, j
 
 ### post_spawn_score
 - Score de 1 à 5 pour la pertinence post-fraie brochet en avril :
-  - **5** = Zone prime : transition shallow/deep, structure complexe, accès zone de fraie
+  - **5** = Zone prime : transition peu profond/profond, structure complexe, accès zone de fraie
   - **4** = Très bon : bon relief, point d'embuscade, corridor stratégique
   - **3** = Correct : profondeur moyenne, structure modérée
   - **2** = Marginal : trop profond, trop plat, ou trop exposé
   - **1** = Peu pertinent pour le post-fraie
 
 ### vegetation / is_spawning_zone / spawning_notes
-- Laisser `null` sauf si l'image satellite montre clairement de la végétation, des roseaux, ou des marges shallow propices à la fraie
-- `is_spawning_zone` : `true` uniquement si marges shallow évidentes (0.5-1.5m) avec végétation probable
+- Laisser `null` sauf si l'image satellite montre clairement de la végétation, des roseaux, ou des marges peu profondes propices à la fraie
+- `is_spawning_zone` : `true` uniquement si marges peu profondes évidentes (0.5-1.5m) avec végétation probable
 
 ### notes
 - **Notes tactiques** — OÙ et POURQUOI, jamais COMMENT
@@ -140,7 +140,7 @@ Génère un JSON valide avec cette structure exacte. **Pas de markdown autour, j
   "vegetation": null,
   "is_spawning_zone": null,
   "spawning_notes": null,
-  "notes": "Zone prime en post-fraie. Les femelles en récupération se postent sur ces transitions shallow/deep — accès direct aux marges de fraie tout en restant près de l'eau profonde. Excellente embuscade pour les brochets. Pêcher parallèle à la cassure en longeant la rive."
+  "notes": "Zone prime en post-fraie. Les femelles en récupération se postent sur ces transitions peu profond/profond — accès direct aux marges de fraie tout en restant près de l'eau profonde. Excellente embuscade pour les brochets. Pêcher parallèle à la cassure en longeant la rive."
 }
 ```
 
