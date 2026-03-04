@@ -135,3 +135,14 @@
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
 }
+
+/* === Leaflet popup close button === */
+.leaflet-popup-close-button {
+  width: 28px !important;
+  height: 28px !important;
+  font-size: 22px !important;
+  line-height: 28px !important;
+  padding: 0 !important;
+  top: 4px !important;
+  right: 4px !important;
+}

@@ -178,9 +178,9 @@ export default function BriefingMap({ zones }: Props) {
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-bold text-base">{zone.zone_name}</p>
                     <span className="font-bold text-lg whitespace-nowrap" style={{ color }}>
-                      {zone.displayScore}
+                      {zone.day_score}
                       <span className="text-xs text-gray-400 font-normal">
-                        /{selectedSlot ? "5" : "10"}
+                        /10
                       </span>
                     </span>
                   </div>
@@ -222,11 +222,11 @@ export default function BriefingMap({ zones }: Props) {
       </Link>
 
       {/* Slot filter pills — bottom overlay */}
-      <div className="absolute bottom-6 left-4 right-16 z-[1000]">
-        <div className="flex gap-2 overflow-x-auto scrollbar-none bg-black/40 backdrop-blur-xl rounded-2xl p-2 border border-white/10">
+      <div className="absolute bottom-6 left-4 right-4 z-[1000]">
+        <div className="flex gap-1.5 bg-black/40 backdrop-blur-xl rounded-2xl p-2 border border-white/10">
           <button
             onClick={() => setSelectedSlot(null)}
-            className={`flex-shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+            className={`flex-1 rounded-xl py-2 text-sm font-semibold transition-colors cursor-pointer ${
               selectedSlot === null
                 ? "bg-white/20 text-white"
                 : "text-white/60 hover:bg-white/10"
@@ -238,7 +238,7 @@ export default function BriefingMap({ zones }: Props) {
             <button
               key={slot}
               onClick={() => setSelectedSlot(selectedSlot === slot ? null : slot)}
-              className={`flex-shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+              className={`flex-1 rounded-xl py-2 text-sm font-semibold transition-colors cursor-pointer ${
                 selectedSlot === slot
                   ? "bg-white/20 text-white"
                   : "text-white/60 hover:bg-white/10"

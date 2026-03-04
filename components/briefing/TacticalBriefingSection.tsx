@@ -36,7 +36,7 @@ function SlotFilterPills({
     <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
       <button
         onClick={() => onChange(null)}
-        className={`flex-shrink-0 rounded-xl px-4 py-2 text-sm font-semibold transition-colors cursor-pointer ${
+        className={`flex-shrink-0 rounded-xl px-5 py-2.5 text-base font-semibold transition-colors cursor-pointer ${
           selected === null
             ? "bg-white/15 text-white border border-white/20"
             : "bg-white/5 text-white/50 border border-white/10 hover:bg-white/10"
@@ -48,7 +48,7 @@ function SlotFilterPills({
         <button
           key={slot}
           onClick={() => onChange(selected === slot ? null : slot)}
-          className={`flex-shrink-0 rounded-xl px-4 py-2 text-sm font-semibold transition-colors cursor-pointer ${
+          className={`flex-shrink-0 rounded-xl px-5 py-2.5 text-base font-semibold transition-colors cursor-pointer ${
             selected === slot
               ? "bg-white/15 text-white border border-white/20"
               : "bg-white/5 text-white/50 border border-white/10 hover:bg-white/10"
@@ -74,7 +74,7 @@ function ZoneCard({
 }) {
   const [detailOpen, setDetailOpen] = useState(false);
 
-  const displayScore = selectedSlot ? zone.slots[selectedSlot].score : zone.day_score;
+  const displayScore = zone.day_score;
   const displayTier = selectedSlot ? zone.slots[selectedSlot].tier : zone.tier;
   const tierCfg = TIER_CONFIG[displayTier];
 
@@ -99,10 +99,10 @@ function ZoneCard({
           </div>
           <div className="flex-shrink-0 text-right">
             <span className="text-2xl font-bold font-[family-name:var(--font-plex)] text-white">
-              {selectedSlot ? displayScore : displayScore}
+              {displayScore}
             </span>
             <span className="text-sm text-white/40">
-              /{selectedSlot ? "5" : "10"}
+              /10
             </span>
           </div>
         </div>
@@ -270,7 +270,7 @@ function TierGroup({
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
-        <span className="text-sm font-bold tracking-wider uppercase text-white/50 group-hover:text-white/70 transition-colors">
+        <span className="text-lg font-bold tracking-wider uppercase text-white/50 group-hover:text-white/70 transition-colors">
           {cfg.emoji} {cfg.label}
         </span>
         <span className="text-xs text-white/30 font-[family-name:var(--font-plex)]">
