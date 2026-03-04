@@ -162,7 +162,7 @@ export default function TacticalBriefingSection({ content, zonesMap, date }: Pro
     <div className="space-y-6">
       {/* Summary */}
       <GlassCard>
-        <SectionTitle>Briefing tactique</SectionTitle>
+        <SectionTitle>Briefing tactique{date ? ` — ${new Date(date + "T00:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}` : ""}</SectionTitle>
 
         {/* Weather summary as bullet points */}
         <ul className="mt-3 space-y-1.5">
