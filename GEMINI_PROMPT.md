@@ -60,7 +60,7 @@ Génère un JSON valide avec cette structure exacte. **Pas de markdown autour, j
       "vegetation": null,
       "is_spawning_zone": null,
       "spawning_notes": null,
-      "notes": "Notes tactiques pour la pêche au brochet en post-fraie. Où se poster, quels leurres, quel comportement du poisson attendre."
+      "notes": "Notes tactiques pour la pêche au brochet en post-fraie. Où se poster, quel comportement du poisson attendre, pourquoi cette zone est intéressante."
     }
   ]
 }
@@ -115,8 +115,9 @@ Génère un JSON valide avec cette structure exacte. **Pas de markdown autour, j
 - `is_spawning_zone` : `true` uniquement si marges shallow évidentes (0.5-1.5m) avec végétation probable
 
 ### notes
-- **Notes tactiques** de pêche au brochet
-- Où se poster, comment pêcher la zone, quels leurres, comportement attendu du poisson
+- **Notes tactiques** — OÙ et POURQUOI, jamais COMMENT
+- Où se poster, pourquoi les poissons sont là, comportement attendu du poisson
+- Ne jamais recommander de leurres, techniques de pêche, ou animations
 - Mentionner les conditions de vent favorables si applicable
 
 ## Exemples de features bien rédigées

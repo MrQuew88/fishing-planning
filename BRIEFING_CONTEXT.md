@@ -16,6 +16,12 @@ Les **scores sont calculés par le script `scripts/score-zones.ts`** (détermini
 
 ---
 
+## RÈGLE ABSOLUE
+
+Ne jamais recommander de leurres, de techniques de pêche, de vitesse de récupération, ou de type d'animation. Le briefing dit OÙ aller et POURQUOI. Le COMMENT est laissé à l'instinct du pêcheur.
+
+---
+
 ## Règles de raisonnement
 
 ### Météo
@@ -23,8 +29,8 @@ Les **scores sont calculés par le script `scripts/score-zones.ts`** (détermini
 - **Vent** : privilégier les zones abritées du vent dominant. Un vent léger (10-20 km/h) crée du chop favorable. Au-delà de 30 km/h, se limiter aux zones très abritées.
 - **Direction du vent** : croiser avec `wind_sheltered` et `wind_exposed` de chaque zone pour déterminer le statut d'abri.
 - **Température eau** : post-fraie (10-14°C), les brochets sont en récupération dans les faibles profondeurs végétalisées. Au-dessus de 15°C, ils migrent vers les structures plus profondes.
-- **Pluie** : une pluie légère est favorable (couverture, oxygénation). Forte pluie = visibilité réduite, utiliser des leurres vibratoires.
-- **Couverture nuageuse** : ciel couvert (>70%) = favorable pour les leurres de surface et shallow. Ciel dégagé = pêcher plus profond ou à l'ombre.
+- **Pluie** : une pluie légère est favorable (couverture, oxygénation). Forte pluie = visibilité réduite.
+- **Couverture nuageuse** : ciel couvert (>70%) = favorable pour les zones shallow. Ciel dégagé = les poissons descendent plus profond ou se réfugient à l'ombre.
 
 ### Solunaire
 - **Périodes majeures** (2h) : activité maximale prévue. Prioriser ces fenêtres pour les meilleurs spots.
@@ -48,11 +54,11 @@ Réponds UNIQUEMENT avec un objet JSON valide (sans code fences, sans texte avan
   "periods": [
     {
       "label": "Fraîche (6h-9h)",
-      "conditions": "Vent S modéré 15 km/h, pression en remontée. Eau froide — pêche lente."
+      "conditions": "Vent S modéré 15 km/h, pression en remontée. Eau froide — activité réduite."
     },
     {
       "label": "Matinée (9h-12h)",
-      "conditions": "Vent SW qui force à 25 km/h. Power fishing en exposition."
+      "conditions": "Vent SW qui force à 25 km/h. Privilégier les zones exposées au chop."
     },
     {
       "label": "Après-midi (12h-16h)",
