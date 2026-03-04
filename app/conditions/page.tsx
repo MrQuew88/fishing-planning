@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { getTodayIrish } from "@/lib/date";
 import { DailyWeather, HourlyForecast, Solunar } from "@/lib/types";
 import ConditionsTabs from "@/components/conditions/ConditionsTabs";
 
@@ -33,7 +34,7 @@ async function getForecastData(): Promise<HourlyForecast[]> {
 
 async function getSolunarData(): Promise<Solunar[]> {
   if (!supabase) return [];
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getTodayIrish();
   const { data, error } = await supabase
     .from("solunar")
     .select("*")

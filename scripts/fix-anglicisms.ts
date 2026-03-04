@@ -27,7 +27,7 @@ const REPLACEMENTS: [RegExp, string | ((match: string, ...args: string[]) => str
   [/\bSpot\b/g, "Poste"],
   [/\bspot\b/g, "poste"],
   [/\bnarrows\b/gi, "goulet"],
-  [/\bchop\b/gi, "clapots"],
+  [/\bchop\b/gi, "clapot"],
   // shallow — context-dependent
   [/\bbordure shallow\b/gi, "bordure peu profonde"],
   [/\bmarge shallow\b/gi, "marge peu profonde"],

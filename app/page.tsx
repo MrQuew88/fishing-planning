@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { getTodayIrish, getTomorrowIrish } from "@/lib/date";
 import { HourlyForecast, Solunar, TacticalBriefing, BriefingContent, FishingZone } from "@/lib/types";
 import TodayHours from "@/components/briefing/TodayHours";
 import SolunarSection from "@/components/briefing/SolunarBar";
@@ -24,7 +25,7 @@ async function getForecastData(): Promise<HourlyForecast[]> {
 
 async function getSolunarData(): Promise<Solunar[]> {
   if (!supabase) return [];
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getTodayIrish();
   const { data, error } = await supabase
     .from("solunar")
     .select("*")
@@ -62,7 +63,7 @@ async function getFishingZones(): Promise<FishingZone[]> {
 }
 
 function getTodayHours(forecast: HourlyForecast[]): HourlyForecast[] {
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = getTodayIrish();
   return forecast.filter((h) => {
     const hDate = h.datetime.slice(0, 10);
     const hHour = parseInt(h.datetime.slice(11, 13), 10);
@@ -76,10 +77,8 @@ function trimSeconds(time: string | null): string {
 }
 
 export default async function BriefingPage() {
-  const todayStr = new Date().toISOString().slice(0, 10);
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+  const todayStr = getTodayIrish();
+  const tomorrowStr = getTomorrowIrish();
 
   const [forecast, solunar, briefing, tomorrowBriefing, fishingZones] = await Promise.all([
     getForecastData(),

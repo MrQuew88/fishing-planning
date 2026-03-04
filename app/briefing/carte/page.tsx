@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { getTodayIrish } from "@/lib/date";
 import { TacticalBriefing, BriefingContent, FishingZone } from "@/lib/types";
 import BriefingMap from "@/components/briefing/BriefingMapLoader";
 
@@ -31,7 +32,7 @@ export default async function BriefingCartePage({
   searchParams: Promise<{ date?: string }>;
 }) {
   const { date } = await searchParams;
-  const targetDate = date || new Date().toISOString().slice(0, 10);
+  const targetDate = date || getTodayIrish();
 
   const [briefing, allZones] = await Promise.all([
     getBriefing(targetDate),
