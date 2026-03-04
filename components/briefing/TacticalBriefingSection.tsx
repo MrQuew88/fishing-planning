@@ -2,55 +2,136 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { BriefingContent, FishingZone } from "@/lib/types";
+import {
+  BriefingContent,
+  BriefingZone,
+  FishingZone,
+  SlotKey,
+  Tier,
+  SLOT_LABELS,
+  TIER_CONFIG,
+} from "@/lib/types";
 import GlassCard from "@/components/ui/GlassCard";
 import SectionTitle from "@/components/ui/SectionTitle";
 import Badge from "@/components/ui/Badge";
 
-const SCORE_STARS = (score: number) =>
-  "★".repeat(score) + "☆".repeat(5 - score);
+// ---------- Slot Filter Pills ----------
 
-function BriefingZoneCard({
-  briefingZone,
-  zoneDetail,
+const ALL_SLOTS: SlotKey[] = ["fraiche", "matinee", "apres_midi", "coup_du_soir"];
+const SLOT_SHORT: Record<SlotKey, string> = {
+  fraiche: "6h-9h",
+  matinee: "9h-12h",
+  apres_midi: "12h-16h",
+  coup_du_soir: "16h-20h",
+};
+
+function SlotFilterPills({
+  selected,
+  onChange,
 }: {
-  briefingZone: BriefingContent["zones"][number];
-  zoneDetail: FishingZone | undefined;
+  selected: SlotKey | null;
+  onChange: (slot: SlotKey | null) => void;
 }) {
-  const [open, setOpen] = useState(false);
+  return (
+    <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+      <button
+        onClick={() => onChange(null)}
+        className={`flex-shrink-0 rounded-xl px-4 py-2 text-sm font-semibold transition-colors cursor-pointer ${
+          selected === null
+            ? "bg-white/15 text-white border border-white/20"
+            : "bg-white/5 text-white/50 border border-white/10 hover:bg-white/10"
+        }`}
+      >
+        Tous
+      </button>
+      {ALL_SLOTS.map((slot) => (
+        <button
+          key={slot}
+          onClick={() => onChange(selected === slot ? null : slot)}
+          className={`flex-shrink-0 rounded-xl px-4 py-2 text-sm font-semibold transition-colors cursor-pointer ${
+            selected === slot
+              ? "bg-white/15 text-white border border-white/20"
+              : "bg-white/5 text-white/50 border border-white/10 hover:bg-white/10"
+          }`}
+        >
+          {SLOT_SHORT[slot]}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ---------- Zone Card ----------
+
+function ZoneCard({
+  zone,
+  zoneDetail,
+  selectedSlot,
+}: {
+  zone: BriefingZone;
+  zoneDetail: FishingZone | undefined;
+  selectedSlot: SlotKey | null;
+}) {
+  const [detailOpen, setDetailOpen] = useState(false);
+
+  const displayScore = selectedSlot ? zone.slots[selectedSlot].score : zone.day_score;
+  const displayTier = selectedSlot ? zone.slots[selectedSlot].tier : zone.tier;
+  const tierCfg = TIER_CONFIG[displayTier];
+
+  // Optimal slots: those with tier T1 or T2
+  const optimalSlots = ALL_SLOTS.filter(
+    (s) => zone.slots[s].tier === "T1" || zone.slots[s].tier === "T2"
+  );
 
   return (
-    <div
-      id={`briefing-zone-${briefingZone.zone_id}`}
-      className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl scroll-mt-24 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-    >
-      {/* Persistent section — always visible */}
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
       <div className="p-4 md:p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-base md:text-lg font-bold text-white">
-                {briefingZone.zone_name}
-              </span>
-              <span className="text-amber-400 text-sm md:text-base font-[family-name:var(--font-plex)]">
-                {SCORE_STARS(briefingZone.post_spawn_score)}
+                {zone.zone_name}
               </span>
             </div>
             <p className="text-sm md:text-base text-white/60 mt-1">
-              {briefingZone.target_depths}
+              {zone.target_depths}
             </p>
+          </div>
+          <div className="flex-shrink-0 text-right">
+            <span className="text-2xl font-bold font-[family-name:var(--font-plex)] text-white">
+              {selectedSlot ? displayScore : displayScore}
+            </span>
+            <span className="text-sm text-white/40">
+              /{selectedSlot ? "5" : "10"}
+            </span>
           </div>
         </div>
 
-        {/* Why today — persistent */}
-        <p className="text-base md:text-lg text-white/80 leading-relaxed mt-3">
-          {briefingZone.why_today}
-        </p>
+        {/* Optimal slot pills */}
+        {optimalSlots.length > 0 && !selectedSlot && (
+          <div className="flex gap-1.5 mt-2 flex-wrap">
+            {optimalSlots.map((s) => (
+              <span
+                key={s}
+                className="text-xs px-2 py-0.5 rounded-md bg-white/[0.06] text-white/60 font-medium"
+              >
+                {SLOT_SHORT[s]}
+              </span>
+            ))}
+          </div>
+        )}
 
-        {/* Google Maps link — persistent */}
-        {briefingZone.google_maps_url && (
+        {/* Why today — only T1/T2 */}
+        {zone.why_today && (displayTier === "T1" || displayTier === "T2") && (
+          <p className="text-base md:text-lg text-white/80 leading-relaxed mt-3">
+            {zone.why_today}
+          </p>
+        )}
+
+        {/* Google Maps link */}
+        {zone.google_maps_url && (
           <a
-            href={briefingZone.google_maps_url}
+            href={zone.google_maps_url}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block text-sm md:text-lg text-[#F59E0B]/80 hover:text-[#F59E0B] transition-colors mt-3"
@@ -60,15 +141,15 @@ function BriefingZoneCard({
         )}
       </div>
 
-      {/* Collapsible — zone detail from fishing_zones */}
+      {/* Collapsible zone detail */}
       {zoneDetail && (
         <>
           <button
-            onClick={() => setOpen(!open)}
+            onClick={() => setDetailOpen(!detailOpen)}
             className="w-full flex items-center gap-2 px-4 md:px-5 py-2 border-t border-white/[0.06] cursor-pointer text-white/40 hover:text-white/60 transition-colors"
           >
             <svg
-              className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${open ? "rotate-0" : "-rotate-90"}`}
+              className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${detailOpen ? "rotate-0" : "-rotate-90"}`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -78,16 +159,12 @@ function BriefingZoneCard({
             </svg>
             <span className="text-sm font-medium">Détails de la zone</span>
           </button>
-
-          <div className="collapse-content" data-open={open}>
+          <div className="collapse-content" data-open={detailOpen}>
             <div className="collapse-inner">
               <div className="px-4 md:px-5 pb-4 md:pb-5 space-y-3">
-                {/* Profile */}
                 <p className="text-sm md:text-base text-white/70 leading-relaxed">
                   {zoneDetail.profile}
                 </p>
-
-                {/* Metadata */}
                 <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm md:text-base">
                   <span className="text-white/50">
                     Prof.{" "}
@@ -106,8 +183,6 @@ function BriefingZoneCard({
                     </span>
                   )}
                 </div>
-
-                {/* Wind */}
                 {(zoneDetail.wind_sheltered.length > 0 || zoneDetail.wind_exposed.length > 0) && (
                   <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm md:text-base">
                     {zoneDetail.wind_sheltered.length > 0 && (
@@ -122,13 +197,35 @@ function BriefingZoneCard({
                     )}
                   </div>
                 )}
-
-                {/* Tactical notes */}
                 {zoneDetail.notes && (
                   <p className="text-sm text-white/50 leading-relaxed italic">
                     {zoneDetail.notes}
                   </p>
                 )}
+
+                {/* Slot scores breakdown */}
+                <div className="grid grid-cols-2 gap-2 pt-2">
+                  {ALL_SLOTS.map((s) => {
+                    const ss = zone.slots[s];
+                    const tc = TIER_CONFIG[ss.tier];
+                    return (
+                      <div
+                        key={s}
+                        className="bg-white/[0.04] rounded-lg px-3 py-2 text-sm"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-white/50">{SLOT_SHORT[s]}</span>
+                          <span className="font-bold font-[family-name:var(--font-plex)] text-white">
+                            {ss.score}<span className="text-white/40 font-normal">/5</span>
+                          </span>
+                        </div>
+                        <div className="text-xs text-white/40 mt-0.5">
+                          {ss.wind_dir} {ss.wind_speed_kmh}km/h · {ss.cloud_cover_pct}%
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
@@ -138,6 +235,68 @@ function BriefingZoneCard({
   );
 }
 
+// ---------- Tier Group ----------
+
+function TierGroup({
+  tier,
+  zones,
+  zonesMap,
+  selectedSlot,
+  defaultCollapsed,
+}: {
+  tier: Tier;
+  zones: BriefingZone[];
+  zonesMap: Record<string, FishingZone>;
+  selectedSlot: SlotKey | null;
+  defaultCollapsed: boolean;
+}) {
+  const [collapsed, setCollapsed] = useState(defaultCollapsed);
+  const cfg = TIER_CONFIG[tier];
+
+  if (zones.length === 0) return null;
+
+  return (
+    <div>
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="w-full flex items-center gap-2 py-2 cursor-pointer group"
+      >
+        <svg
+          className={`w-4 h-4 flex-shrink-0 text-white/40 transition-transform duration-200 ${collapsed ? "-rotate-90" : "rotate-0"}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+        <span className="text-sm font-bold tracking-wider uppercase text-white/50 group-hover:text-white/70 transition-colors">
+          {cfg.emoji} {cfg.label}
+        </span>
+        <span className="text-xs text-white/30 font-[family-name:var(--font-plex)]">
+          {zones.length} zone{zones.length > 1 ? "s" : ""}
+        </span>
+      </button>
+      <div className="collapse-content" data-open={!collapsed}>
+        <div className="collapse-inner">
+          <div className="grid gap-3 pt-1">
+            {zones.map((zone) => (
+              <ZoneCard
+                key={zone.zone_id}
+                zone={zone}
+                zoneDetail={zonesMap[zone.zone_id]}
+                selectedSlot={selectedSlot}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------- Main Component ----------
+
 interface Props {
   content: BriefingContent;
   zonesMap: Record<string, FishingZone>;
@@ -145,34 +304,49 @@ interface Props {
 }
 
 export default function TacticalBriefingSection({ content, zonesMap, date }: Props) {
-  // Build lookup: fishing_zones.name → zone_id (from briefing zones)
-  const nameToZoneId: Record<string, string> = {};
-  for (const z of content.zones) {
-    // Match on fishing_zones `name` field via zonesMap
-    const detail = zonesMap[z.zone_id];
-    if (detail) nameToZoneId[detail.name] = z.zone_id;
+  const [selectedSlot, setSelectedSlot] = useState<SlotKey | null>(null);
+
+  // Group zones by tier (accounting for slot filter)
+  function getDisplayTier(zone: BriefingZone): Tier {
+    return selectedSlot ? zone.slots[selectedSlot].tier : zone.tier;
   }
 
-  function scrollToZone(zoneId: string) {
-    const el = document.getElementById(`briefing-zone-${zoneId}`);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  const tiers: Tier[] = ["T1", "T2", "T3", "T4"];
+  const groupedZones: Record<Tier, BriefingZone[]> = { T1: [], T2: [], T3: [], T4: [] };
+
+  for (const zone of content.zones) {
+    const t = getDisplayTier(zone);
+    groupedZones[t].push(zone);
+  }
+
+  // Sort within each tier by score desc
+  for (const t of tiers) {
+    groupedZones[t].sort((a, b) => {
+      const sa = selectedSlot ? a.slots[selectedSlot].score : a.day_score;
+      const sb = selectedSlot ? b.slots[selectedSlot].score : b.day_score;
+      return sb - sa;
+    });
   }
 
   return (
     <div className="space-y-6">
       {/* Summary */}
       <GlassCard>
-        <SectionTitle>Briefing tactique{date ? ` — ${new Date(date + "T00:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}` : ""}</SectionTitle>
+        <SectionTitle>
+          Briefing tactique
+          {date
+            ? ` — ${new Date(date + "T00:00:00").toLocaleDateString("fr-FR", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+              })}`
+            : ""}
+        </SectionTitle>
 
-        {/* Weather summary as bullet points */}
-        <ul className="mt-3 space-y-1.5">
-          {content.weather_summary.map((item, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm md:text-base text-white/60 font-[family-name:var(--font-plex)]">
-              <span className="flex-shrink-0">{item.icon}</span>
-              <span>{item.text}</span>
-            </li>
-          ))}
-        </ul>
+        {/* Weather summary */}
+        <p className="mt-3 text-sm md:text-base text-white/60 font-[family-name:var(--font-plex)] leading-relaxed">
+          {content.weather_summary}
+        </p>
 
         {/* General conditions */}
         <p className="text-base md:text-lg text-white/80 mt-4 leading-relaxed">
@@ -180,50 +354,31 @@ export default function TacticalBriefingSection({ content, zonesMap, date }: Pro
         </p>
 
         {/* Solunar badges */}
-        <div className="flex gap-2 mt-4 flex-wrap">
-          {content.timing.solunar_major.map((t, i) => (
-            <Badge key={`maj-${i}`} label={`★ ${t}`} color="amber" />
-          ))}
-          {content.timing.solunar_minor.map((t, i) => (
-            <Badge key={`min-${i}`} label={t} color="neutral" />
-          ))}
-        </div>
+        {content.solunar && (
+          <div className="flex gap-2 mt-4 flex-wrap">
+            {content.solunar.major.map((t, i) => (
+              <Badge key={`maj-${i}`} label={`★ ${t}`} color="amber" />
+            ))}
+            {content.solunar.minor.map((t, i) => (
+              <Badge key={`min-${i}`} label={t} color="neutral" />
+            ))}
+          </div>
+        )}
       </GlassCard>
 
       {/* Day periods */}
-      {content.timing.periods.length > 0 && (
+      {content.periods && content.periods.length > 0 && (
         <div>
           <SectionTitle>Évolution de la journée</SectionTitle>
           <GlassCard className="mt-4">
             <div className="space-y-5">
-              {content.timing.periods.map((period, i) => (
+              {content.periods.map((period, i) => (
                 <div key={i}>
                   <p className="text-base md:text-lg text-white/80 leading-relaxed">
                     <span className="font-semibold text-white">{period.label}</span>
-                    {" — "}{period.conditions}
+                    {" — "}
+                    {period.conditions}
                   </p>
-                  {period.zones.length > 0 && (
-                    <ul className="mt-1.5 space-y-1 ml-1">
-                      {period.zones.map((zoneName, j) => {
-                        const zoneId = nameToZoneId[zoneName];
-                        return (
-                          <li key={j} className="flex items-center gap-2 text-sm md:text-base">
-                            <span className="text-white/30">•</span>
-                            {zoneId ? (
-                              <button
-                                onClick={() => scrollToZone(zoneId)}
-                                className="text-[#F59E0B]/80 hover:text-[#F59E0B] transition-colors text-left cursor-pointer"
-                              >
-                                {zoneName}
-                              </button>
-                            ) : (
-                              <span className="text-white/60">{zoneName}</span>
-                            )}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  )}
                 </div>
               ))}
             </div>
@@ -231,22 +386,32 @@ export default function TacticalBriefingSection({ content, zonesMap, date }: Pro
         </div>
       )}
 
-      {/* Zone cards */}
+      {/* Slot filter + zones grouped by tier */}
       {content.zones.length > 0 && (
         <div>
-          <SectionTitle>Zones recommandées</SectionTitle>
-          <Link
-            href={date ? `/briefing/carte?date=${date}` : "/briefing/carte"}
-            className="inline-flex items-center gap-2 bg-white/10 border border-white/10 rounded-xl px-5 py-3 text-lg font-semibold text-white hover:bg-white/15 transition-colors mt-4"
-          >
-            🗺 Voir sur la carte
-          </Link>
-          <div className="grid gap-3 mt-4">
-            {content.zones.map((zone, i) => (
-              <BriefingZoneCard
-                key={i}
-                briefingZone={zone}
-                zoneDetail={zonesMap[zone.zone_id]}
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <SectionTitle>Classement des zones</SectionTitle>
+            <Link
+              href={date ? `/briefing/carte?date=${date}` : "/briefing/carte"}
+              className="inline-flex items-center gap-2 bg-white/10 border border-white/10 rounded-xl px-4 py-2 text-sm font-semibold text-white hover:bg-white/15 transition-colors"
+            >
+              🗺 Carte
+            </Link>
+          </div>
+
+          <div className="mt-4">
+            <SlotFilterPills selected={selectedSlot} onChange={setSelectedSlot} />
+          </div>
+
+          <div className="space-y-4 mt-4">
+            {tiers.map((tier) => (
+              <TierGroup
+                key={tier}
+                tier={tier}
+                zones={groupedZones[tier]}
+                zonesMap={zonesMap}
+                selectedSlot={selectedSlot}
+                defaultCollapsed={tier === "T4"}
               />
             ))}
           </div>

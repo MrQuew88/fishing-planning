@@ -125,6 +125,20 @@ export default async function BriefingPage() {
           const parsed = JSON.parse(briefing.content) as BriefingContent;
           const zonesMap: Record<string, FishingZone> = {};
           for (const z of fishingZones) zonesMap[z.id] = z;
+
+          // Backward compat: check if new format
+          const isNewFormat = parsed.zones?.[0]?.day_score != null;
+          if (!isNewFormat) {
+            return (
+              <GlassCard>
+                <SectionTitle>Briefing tactique</SectionTitle>
+                <p className="text-lg text-white/50 mt-3 italic">
+                  Briefing obsol&egrave;te — veuillez reg&eacute;n&eacute;rer avec le nouveau format.
+                </p>
+              </GlassCard>
+            );
+          }
+
           return <TacticalBriefingSection content={parsed} zonesMap={zonesMap} date={briefing.date} />;
         })()
       ) : (
@@ -141,6 +155,11 @@ export default async function BriefingPage() {
         const parsed = JSON.parse(tomorrowBriefing.content) as BriefingContent;
         const zonesMap: Record<string, FishingZone> = {};
         for (const z of fishingZones) zonesMap[z.id] = z;
+
+        // Backward compat check
+        const isNewFormat = parsed.zones?.[0]?.day_score != null;
+        if (!isNewFormat) return null;
+
         return (
           <TomorrowBriefingCollapsible
             date={tomorrowStr}

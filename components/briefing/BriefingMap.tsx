@@ -12,34 +12,38 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { SlotKey, Tier, SlotScore, TIER_CONFIG } from "@/lib/types";
 
 interface MapZone {
   zone_id: string;
   zone_name: string;
-  post_spawn_score: number;
-  why_today: string;
+  day_score: number;
+  tier: Tier;
+  why_today?: string;
   google_maps_url: string | null;
   lat: number;
   lng: number;
-  periods: string[];
+  slots: Record<SlotKey, SlotScore>;
 }
 
 interface Props {
   zones: MapZone[];
 }
 
-const SCORE_COLORS: Record<number, string> = {
-  5: "#F59E0B",
-  4: "#22C55E",
-  3: "#3B82F6",
+const TIER_COLORS: Record<Tier, string> = {
+  T1: "#F59E0B", // amber
+  T2: "#22C55E", // green
+  T3: "#3B82F6", // blue
+  T4: "#6B7280", // gray
 };
 
-const SCORE_STARS = (score: number) =>
-  "★".repeat(score) + "☆".repeat(5 - score);
-
-function getScoreColor(score: number): string {
-  return SCORE_COLORS[score] || "#6B7280";
-}
+const ALL_SLOTS: SlotKey[] = ["fraiche", "matinee", "apres_midi", "coup_du_soir"];
+const SLOT_SHORT: Record<SlotKey, string> = {
+  fraiche: "6h-9h",
+  matinee: "9h-12h",
+  apres_midi: "12h-16h",
+  coup_du_soir: "16h-20h",
+};
 
 function UserLocation({
   onPositionChange,
@@ -106,6 +110,7 @@ function UserLocation({
 
 export default function BriefingMap({ zones }: Props) {
   const [userPos, setUserPos] = useState<[number, number] | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<SlotKey | null>(null);
   const mapRef = useRef<L.Map | null>(null);
 
   const center: [number, number] =
@@ -116,6 +121,19 @@ export default function BriefingMap({ zones }: Props) {
       mapRef.current.flyTo(userPos, 16);
     }
   }
+
+  // Filter and color zones based on selected slot
+  const displayZones = zones
+    .map((zone) => {
+      const tier = selectedSlot ? zone.slots[selectedSlot].tier : zone.tier;
+      const score = selectedSlot ? zone.slots[selectedSlot].score : zone.day_score;
+      return { ...zone, displayTier: tier, displayScore: score };
+    })
+    .filter((zone) => {
+      // When slot filter active, hide T4
+      if (selectedSlot && zone.displayTier === "T4") return false;
+      return true;
+    });
 
   return (
     <div
@@ -137,48 +155,60 @@ export default function BriefingMap({ zones }: Props) {
 
         <ZoomControls />
 
-        {zones.map((zone) => (
-          <CircleMarker
-            key={zone.zone_id}
-            center={[zone.lat, zone.lng]}
-            radius={10}
-            pathOptions={{
-              color: "#ffffff",
-              fillColor: getScoreColor(zone.post_spawn_score),
-              fillOpacity: 0.9,
-              weight: 2,
-            }}
-          >
-            <Popup>
-              <div className="text-sm min-w-[220px]">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="font-bold text-base">{zone.zone_name}</p>
-                  <span className="text-amber-500 text-sm whitespace-nowrap">
-                    {SCORE_STARS(zone.post_spawn_score)}
-                  </span>
+        {displayZones.map((zone) => {
+          const color = TIER_COLORS[zone.displayTier];
+          const optimalSlots = ALL_SLOTS.filter(
+            (s) => zone.slots[s].tier === "T1" || zone.slots[s].tier === "T2"
+          );
+
+          return (
+            <CircleMarker
+              key={zone.zone_id}
+              center={[zone.lat, zone.lng]}
+              radius={10}
+              pathOptions={{
+                color: "#ffffff",
+                fillColor: color,
+                fillOpacity: 0.9,
+                weight: 2,
+              }}
+            >
+              <Popup>
+                <div className="text-sm min-w-[220px]">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="font-bold text-base">{zone.zone_name}</p>
+                    <span className="font-bold text-lg whitespace-nowrap" style={{ color }}>
+                      {zone.displayScore}
+                      <span className="text-xs text-gray-400 font-normal">
+                        /{selectedSlot ? "5" : "10"}
+                      </span>
+                    </span>
+                  </div>
+                  {zone.why_today && (
+                    <p className="text-gray-600 mt-1 leading-snug">
+                      {zone.why_today}
+                    </p>
+                  )}
+                  {optimalSlots.length > 0 && (
+                    <p className="text-blue-700 font-medium mt-2 text-xs">
+                      🕐 {optimalSlots.map((s) => SLOT_SHORT[s]).join(", ")}
+                    </p>
+                  )}
+                  {zone.google_maps_url && (
+                    <a
+                      href={zone.google_maps_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block mt-2 bg-white/90 text-slate-900 text-center rounded-xl py-3 px-3 font-semibold text-sm"
+                    >
+                      📍 Ouvrir dans Maps
+                    </a>
+                  )}
                 </div>
-                <p className="text-gray-600 mt-1 leading-snug">
-                  {zone.why_today}
-                </p>
-                {zone.periods.length > 0 && (
-                  <p className="text-blue-700 font-medium mt-2 text-xs">
-                    🕐 {zone.periods.join(", ")}
-                  </p>
-                )}
-                {zone.google_maps_url && (
-                  <a
-                    href={zone.google_maps_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block mt-2 bg-blue-600 text-white text-center rounded-lg py-2 px-3 font-medium text-sm"
-                  >
-                    📍 Ouvrir dans Maps
-                  </a>
-                )}
-              </div>
-            </Popup>
-          </CircleMarker>
-        ))}
+              </Popup>
+            </CircleMarker>
+          );
+        })}
 
         <UserLocation onPositionChange={setUserPos} />
       </MapContainer>
@@ -190,6 +220,35 @@ export default function BriefingMap({ zones }: Props) {
       >
         ← Briefing
       </Link>
+
+      {/* Slot filter pills — bottom overlay */}
+      <div className="absolute bottom-6 left-4 right-16 z-[1000]">
+        <div className="flex gap-2 overflow-x-auto scrollbar-none bg-black/40 backdrop-blur-xl rounded-2xl p-2 border border-white/10">
+          <button
+            onClick={() => setSelectedSlot(null)}
+            className={`flex-shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+              selectedSlot === null
+                ? "bg-white/20 text-white"
+                : "text-white/60 hover:bg-white/10"
+            }`}
+          >
+            Tous
+          </button>
+          {ALL_SLOTS.map((slot) => (
+            <button
+              key={slot}
+              onClick={() => setSelectedSlot(selectedSlot === slot ? null : slot)}
+              className={`flex-shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+                selectedSlot === slot
+                  ? "bg-white/20 text-white"
+                  : "text-white/60 hover:bg-white/10"
+              }`}
+            >
+              {SLOT_SHORT[slot]}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* Center on user button */}
       {userPos && (

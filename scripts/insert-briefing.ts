@@ -60,19 +60,25 @@ async function main() {
 
   console.log(`[insert-briefing] Date : ${date}`);
   console.log(`[insert-briefing] Zones : ${parsed.zones?.length ?? 0}`);
-  const summaryPreview = Array.isArray(parsed.weather_summary)
-    ? parsed.weather_summary.map((s: { text: string }) => s.text).join(" · ").slice(0, 80)
-    : String(parsed.weather_summary ?? "–").slice(0, 80);
+  const summaryPreview = typeof parsed.weather_summary === "string"
+    ? parsed.weather_summary.slice(0, 80)
+    : Array.isArray(parsed.weather_summary)
+      ? parsed.weather_summary.map((s: { text: string }) => s.text).join(" · ").slice(0, 80)
+      : String(parsed.weather_summary ?? "–").slice(0, 80);
   console.log(`[insert-briefing] Résumé météo : ${summaryPreview}`);
 
   // Validate zones
-  const requiredFields = ["zone_name", "why_today", "target_depths"] as const;
+  const requiredFields = ["zone_name", "target_depths", "day_score", "tier"] as const;
   if (Array.isArray(parsed.zones)) {
     for (const zone of parsed.zones) {
       for (const field of requiredFields) {
-        if (!zone[field]) {
+        if (zone[field] == null || zone[field] === "") {
           console.warn(`[insert-briefing] ⚠ Zone "${zone.zone_name ?? "?"}" : champ "${field}" manquant ou vide`);
         }
+      }
+      // why_today is optional but warn if missing for T1/T2
+      if (!zone.why_today && (zone.tier === "T1" || zone.tier === "T2")) {
+        console.warn(`[insert-briefing] ⚠ Zone "${zone.zone_name ?? "?"}" (${zone.tier}) : why_today manquant`);
       }
     }
   }

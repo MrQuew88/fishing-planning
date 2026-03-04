@@ -68,22 +68,58 @@ export interface TacticalBriefing {
   created_at: string;
 }
 
+export type SlotKey = "fraiche" | "matinee" | "apres_midi" | "coup_du_soir";
+export type Tier = "T1" | "T2" | "T3" | "T4";
+
+export const SLOT_LABELS: Record<SlotKey, string> = {
+  fraiche: "Fraîche (6h-9h)",
+  matinee: "Matinée (9h-12h)",
+  apres_midi: "Après-midi (12h-16h)",
+  coup_du_soir: "Coup du soir (16h-20h)",
+};
+
+export const TIER_CONFIG: Record<Tier, { label: string; emoji: string; color: string }> = {
+  T1: { label: "Top picks", emoji: "🔥", color: "amber" },
+  T2: { label: "Très bon", emoji: "⭐", color: "green" },
+  T3: { label: "Correct", emoji: "👍", color: "blue" },
+  T4: { label: "Éviter", emoji: "💤", color: "neutral" },
+};
+
+export interface SlotScore {
+  wind_dir: string;
+  wind_speed_kmh: number;
+  cloud_cover_pct: number;
+  pressure_hpa: number;
+  score: number;
+  tier: Tier;
+}
+
+export interface BriefingZone {
+  zone_id: string;
+  zone_name: string;
+  post_spawn_score: number;
+  day_score: number;
+  tier: Tier;
+  target_depths: string;
+  why_today?: string;
+  google_maps_url: string | null;
+  slots: Record<SlotKey, SlotScore>;
+}
+
+export interface BriefingPeriod {
+  label: string;
+  conditions: string;
+}
+
 export interface BriefingContent {
   date: string;
-  weather_summary: { icon: string; text: string }[];
+  weather_summary: string;
   general_conditions: string;
-  zones: {
-    zone_id: string;
-    zone_name: string;
-    post_spawn_score: number;
-    why_today: string;
-    target_depths: string;
-    google_maps_url: string | null;
-  }[];
-  timing: {
-    solunar_major: string[];
-    solunar_minor: string[];
-    periods: { label: string; conditions: string; zones: string[] }[];
+  zones: BriefingZone[];
+  periods: BriefingPeriod[];
+  solunar: {
+    major: string[];
+    minor: string[];
   };
 }
 
