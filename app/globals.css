@@ -136,6 +136,15 @@
   to { transform: translateX(0); }
 }
 
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUp 250ms ease forwards;
+}
+
 /* === Leaflet popup close button === */
 .leaflet-popup-close-button {
   width: 28px !important;

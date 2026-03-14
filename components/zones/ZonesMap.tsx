@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   MapContainer,
   TileLayer,
   CircleMarker,
-  Popup,
   useMap,
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import SpotBottomSheet from "@/components/map/SpotBottomSheet";
 
 interface MapZone {
   id: string;
@@ -42,6 +42,8 @@ function getScoreColor(score: number): string {
 }
 
 export default function ZonesMap({ zones }: Props) {
+  const [selectedZone, setSelectedZone] = useState<MapZone | null>(null);
+
   return (
     <div
       className="fixed left-0 right-0 bottom-0 cursor-crosshair"
@@ -72,31 +74,10 @@ export default function ZonesMap({ zones }: Props) {
               fillOpacity: 0.9,
               weight: 2,
             }}
-          >
-            <Popup>
-              <div className="text-sm min-w-[200px]">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="font-bold text-base">{zone.name}</p>
-                  <span className="text-amber-500 text-sm whitespace-nowrap">
-                    {SCORE_STARS(zone.post_spawn_score)}
-                  </span>
-                </div>
-                <p className="text-gray-600 mt-1">
-                  Prof. {zone.depth_min}–{zone.depth_max}m
-                </p>
-                {zone.google_maps_url && (
-                  <a
-                    href={zone.google_maps_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block mt-2 bg-blue-600 text-white text-center rounded-lg py-2 px-3 font-medium text-sm"
-                  >
-                    📍 Ouvrir dans Maps
-                  </a>
-                )}
-              </div>
-            </Popup>
-          </CircleMarker>
+            eventHandlers={{
+              click: () => setSelectedZone(zone),
+            }}
+          />
         ))}
       </MapContainer>
 
@@ -107,6 +88,17 @@ export default function ZonesMap({ zones }: Props) {
       >
         ← Zones
       </Link>
+
+      {/* Spot bottom sheet */}
+      {selectedZone && (
+        <SpotBottomSheet
+          variant="zones"
+          zone={selectedZone}
+          scoreStars={SCORE_STARS(selectedZone.post_spawn_score)}
+          scoreColor={getScoreColor(selectedZone.post_spawn_score)}
+          onClose={() => setSelectedZone(null)}
+        />
+      )}
     </div>
   );
 }

@@ -7,12 +7,12 @@ import {
   TileLayer,
   CircleMarker,
   Circle,
-  Popup,
   useMap,
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { SlotKey, Tier, SlotScore, TIER_CONFIG } from "@/lib/types";
+import SpotBottomSheet from "@/components/map/SpotBottomSheet";
 
 interface MapZone {
   zone_id: string;
@@ -111,6 +111,7 @@ function UserLocation({
 export default function BriefingMap({ zones }: Props) {
   const [userPos, setUserPos] = useState<[number, number] | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<SlotKey | null>(null);
+  const [selectedZone, setSelectedZone] = useState<(MapZone & { displayTier: Tier; displayScore: number }) | null>(null);
   const mapRef = useRef<L.Map | null>(null);
 
   const center: [number, number] =
@@ -157,10 +158,6 @@ export default function BriefingMap({ zones }: Props) {
 
         {displayZones.map((zone) => {
           const color = TIER_COLORS[zone.displayTier];
-          const optimalSlots = ALL_SLOTS.filter(
-            (s) => zone.slots[s].tier === "T1" || zone.slots[s].tier === "T2"
-          );
-
           return (
             <CircleMarker
               key={zone.zone_id}
@@ -172,41 +169,10 @@ export default function BriefingMap({ zones }: Props) {
                 fillOpacity: 0.9,
                 weight: 2,
               }}
-            >
-              <Popup>
-                <div className="text-sm min-w-[220px]">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="font-bold text-base">{zone.zone_name}</p>
-                    <span className="font-bold text-lg whitespace-nowrap" style={{ color }}>
-                      {zone.day_score}
-                      <span className="text-xs text-gray-400 font-normal">
-                        /10
-                      </span>
-                    </span>
-                  </div>
-                  {zone.why_today && (
-                    <p className="text-gray-600 mt-1 leading-snug">
-                      {zone.why_today}
-                    </p>
-                  )}
-                  {optimalSlots.length > 0 && (
-                    <p className="text-blue-700 font-medium mt-2 text-xs">
-                      🕐 {optimalSlots.map((s) => SLOT_SHORT[s]).join(", ")}
-                    </p>
-                  )}
-                  {zone.google_maps_url && (
-                    <a
-                      href={zone.google_maps_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block mt-2 bg-white/90 text-slate-900 text-center rounded-xl py-3 px-3 font-semibold text-sm"
-                    >
-                      📍 Ouvrir dans Maps
-                    </a>
-                  )}
-                </div>
-              </Popup>
-            </CircleMarker>
+              eventHandlers={{
+                click: () => setSelectedZone(zone),
+              }}
+            />
           );
         })}
 
@@ -269,6 +235,19 @@ export default function BriefingMap({ zones }: Props) {
             <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
           </svg>
         </button>
+      )}
+
+      {/* Spot bottom sheet */}
+      {selectedZone && (
+        <SpotBottomSheet
+          variant="briefing"
+          zone={selectedZone}
+          tierColor={TIER_COLORS[selectedZone.displayTier]}
+          optimalSlots={ALL_SLOTS.filter(
+            (s) => selectedZone.slots[s].tier === "T1" || selectedZone.slots[s].tier === "T2"
+          ).map((s) => SLOT_SHORT[s])}
+          onClose={() => setSelectedZone(null)}
+        />
       )}
     </div>
   );
