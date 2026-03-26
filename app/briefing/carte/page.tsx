@@ -72,6 +72,7 @@ export default async function BriefingCartePage({
       return {
         zone_id: bz.zone_id,
         zone_name: bz.zone_name,
+        feature_name: detail.name,
         day_score: bz.day_score,
         tier: bz.tier,
         why_today: bz.why_today,

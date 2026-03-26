@@ -20,6 +20,7 @@ function getBathymetryPath(spotName: string): string {
 /* ------------------------------------------------------------------ */
 interface BriefingZone {
   zone_name: string;
+  feature_name: string;
   day_score: number;
   tier: string;
   why_today?: string;
@@ -47,7 +48,8 @@ export default function SpotBottomSheet(props: SpotBottomSheetProps) {
   const [imgError, setImgError] = useState(false);
 
   const spotName = variant === "briefing" ? zone.zone_name : zone.name;
-  const imgSrc = getBathymetryPath(spotName);
+  const imgKey = variant === "briefing" ? zone.feature_name : zone.name;
+  const imgSrc = getBathymetryPath(imgKey);
 
   return (
     <>

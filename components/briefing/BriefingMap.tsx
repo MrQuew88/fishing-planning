@@ -17,6 +17,7 @@ import SpotBottomSheet from "@/components/map/SpotBottomSheet";
 interface MapZone {
   zone_id: string;
   zone_name: string;
+  feature_name: string;
   day_score: number;
   tier: Tier;
   why_today?: string;
